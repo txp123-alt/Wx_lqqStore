@@ -1,0 +1,57 @@
+<view class="container">
+  <view class="header">
+    <text class="title">本次出摊携带商品</text>
+  </view>
+  
+  <view class="empty-tip" wx:if="{{stallItems.length === 0}}">
+    <text class="tip-text">请从库存页面添加出摊商品</text>
+  </view>
+  
+  <view class="list-section">
+    <text class="section-title">携带商品列表</text>
+    <view class="item-list">
+      <view wx:for="{{stallItems}}" wx:key="id" class="item">
+        <view class="item-info">
+          <text class="item-name">{{item.name}}</text>
+          <text class="item-count">数量: {{item.count}}</text>
+        </view>
+        <view class="item-actions">
+          <button size="mini" type="warn" bindtap="removeItem" data-id="{{item.id}}">删除</button>
+          <button size="mini" type="primary" bindtap="showSellModal" data-id="{{item.id}}">售出</button>
+        </view>
+      </view>
+      <view wx:if="{{stallItems.length === 0}}" class="empty">
+        <text>暂无携带商品</text>
+      </view>
+    </view>
+  </view>
+  
+  
+  
+  <!-- 售出弹框 -->
+  <view class="modal-overlay" wx:if="{{showSellModal}}">
+    <view class="modal">
+      <view class="modal-header">
+        <text class="modal-title">商品售出</text>
+      </view>
+      <view class="modal-content">
+        <view class="modal-info">
+          <text class="modal-label">商品名称:</text>
+          <text class="modal-value">{{selectedItem.name}}</text>
+        </view>
+        <view class="modal-info">
+          <text class="modal-label">当前库存:</text>
+          <text class="modal-value">{{selectedItem.count}} 件</text>
+        </view>
+        <view class="input-group">
+          <text class="input-label">售出数量:</text>
+          <input type="number" placeholder="请输入售出数量" bindinput="onSellCountInput" value="{{sellCount}}" />
+        </view>
+      </view>
+      <view class="modal-footer">
+        <button type="default" bindtap="hideSellModal">取消</button>
+        <button type="primary" bindtap="confirmSell">确认售出</button>
+      </view>
+    </view>
+  </view>
+</view>
