@@ -1,7 +1,5 @@
 <view class="container">
-  <view class="header">
-    <text class="title">库存仓储</text>
-  </view>
+
   
   <view class="summary-section">
     <text class="summary-title">总库存统计</text>
@@ -23,6 +21,9 @@
     <text class="section-title">库存商品列表</text>
     <view class="item-list">
       <view wx:for="{{inventoryItems}}" wx:key="id" class="item">
+        <view class="item-image">
+          <image src="{{item.image || '/images/default-goods-image.png'}}" mode="aspectFill" class="goods-thumbnail"></image>
+        </view>
         <view class="item-info">
           <text class="item-name">{{item.name}}</text>
           <text class="item-count">库存数量: {{item.count}}</text>

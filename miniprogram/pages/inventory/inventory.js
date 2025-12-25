@@ -32,25 +32,28 @@ Page({
     // 如果没有数据，添加测试数据
     if (inventoryItems.length === 0) {
       const testItems = [
-        { id: 1, name: '矿泉水', count: 20 },
-        { id: 2, name: '方便面', count: 15 },
-        { id: 3, name: '面包', count: 10 },
-        { id: 4, name: '火腿肠', count: 25 },
-        { id: 5, name: '薯片', count: 18 },
-        { id: 6, name: '可乐', count: 30 },
-        { id: 7, name: '雪碧', count: 22 },
-        { id: 8, name: '果汁', count: 15 },
-        { id: 9, name: '饼干', count: 28 },
-        { id: 10, name: '巧克力', count: 12 },
-        { id: 11, name: '糖果', count: 40 },
-        { id: 12, name: '坚果', count: 25 },
-        { id: 13, name: '口香糖', count: 35 },
-        { id: 14, name: '咖啡', count: 18 },
-        { id: 15, name: '奶茶', count: 22 }
+        { id: 1, name: '矿泉水', count: 20, image: '/images/water.png' },
+        { id: 2, name: '方便面', count: 15, image: '/images/noodles.png' },
+        { id: 3, name: '面包', count: 10, image: '/images/bread.png' },
+        { id: 4, name: '火腿肠', count: 25, image: '/images/sausage.png' },
+        { id: 5, name: '薯片', count: 18, image: '/images/chips.png' },
+        { id: 6, name: '可乐', count: 30, image: '/images/cola.png' },
+        { id: 7, name: '雪碧', count: 22, image: '/images/sprite.png' },
+        { id: 8, name: '果汁', count: 15, image: '/images/juice.png' },
+        { id: 9, name: '饼干', count: 28, image: '/images/cookies.png' },
+        { id: 10, name: '巧克力', count: 12, image: '/images/chocolate.png' },
+        { id: 11, name: '糖果', count: 40, image: '/images/candy.png' },
+        { id: 12, name: '坚果', count: 25, image: '/images/nuts.png' },
+        { id: 13, name: '口香糖', count: 35, image: '/images/gum.png' },
+        { id: 14, name: '咖啡', count: 18, image: '/images/coffee.png' },
+        { id: 15, name: '奶茶', count: 22, image: '/images/milktea.png' }
       ];
       inventoryItems = testItems;
       wx.setStorageSync('inventoryItems', inventoryItems);
     }
+    
+    // 预留：加载商品图片的后台接口
+    this.loadProductImages(inventoryItems);
 
     // 计算库存统计
     const totalInventoryCount = inventoryItems.reduce((total, item) => total + item.count, 0);
@@ -92,7 +95,8 @@ Page({
     const newItem = {
       id: Date.now(),
       name: name,
-      count: count
+      count: count,
+      image: '/images/default-goods-image.png' // 默认图片，后续可通过后台接口更新
     };
 
     const inventoryItems = [...this.data.inventoryItems, newItem];
@@ -203,7 +207,8 @@ Page({
       updatedStallItems = [...stallItems, {
         id: selectedItem.id,
         name: selectedItem.name,
-        count: stallCount
+        count: stallCount,
+        image: selectedItem.image
       }];
     }
     
@@ -225,5 +230,44 @@ Page({
       title: '添加成功',
       icon: 'success'
     });
+  },
+  
+  // 后台接口预留 - 加载商品图片
+  loadProductImages: function(items) {
+    // TODO: 实际项目中调用后台API获取商品图片
+    console.log('调用后台接口加载商品图片：', {
+      items: items.map(item => ({
+        id: item.id,
+        name: item.name
+      }))
+    });
+    
+    // 模拟API调用 - 为商品加载图片
+    /*
+    wx.request({
+      url: 'https://your-api.com/api/products/images',
+      method: 'POST',
+      data: {
+        productIds: items.map(item => item.id)
+      },
+      success: function(res) {
+        if (res.data && res.data.success) {
+          // 更新商品图片数据
+          const imageMap = res.data.data;
+          const updatedItems = items.map(item => ({
+            ...item,
+            image: imageMap[item.id] || item.image
+          }));
+          wx.setStorageSync('inventoryItems', updatedItems);
+          this.setData({
+            inventoryItems: updatedItems
+          });
+        }
+      }.bind(this),
+      fail: function(err) {
+        console.error('加载商品图片失败', err);
+      }
+    });
+    */
   }
 });

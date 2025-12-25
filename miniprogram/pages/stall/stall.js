@@ -11,18 +11,27 @@ Page({
     // 从本地存储获取出摊商品数据
     let stallItems = wx.getStorageSync('stallItems') || [];
     
-    // 如果没有数据，添加假数据
-    if (stallItems.length === 0) {
-      stallItems = [
-        { id: 1, name: '矿泉水', count: 20 },
-        { id: 2, name: '方便面', count: 15 },
-        { id: 3, name: '面包', count: 10 },
-        { id: 4, name: '火腿肠', count: 25 },
-        { id: 5, name: '薯片', count: 18 }
-      ];
-      // 保存假数据到本地存储
-      wx.setStorageSync('stallItems', stallItems);
-    }
+    // 添加测试数据，不管本地存储是否有数据
+    stallItems = [
+      { id: 1, name: '矿泉水', count: 20, image: '/images/water.png' },
+      { id: 2, name: '方便面', count: 15, image: '/images/noodles.png' },
+      { id: 3, name: '面包', count: 10, image: '/images/bread.png' },
+      { id: 4, name: '火腿肠', count: 25, image: '/images/sausage.png' },
+      { id: 5, name: '薯片', count: 18, image: '/images/chips.png' },
+      { id: 6, name: '可乐', count: 22, image: '/images/cola.png' },
+      { id: 7, name: '雪碧', count: 16, image: '/images/sprite.png' },
+      { id: 8, name: '饼干', count: 30, image: '/images/cookies.png' },
+      { id: 9, name: '巧克力', count: 28, image: '/images/chocolate.png' },
+      { id: 10, name: '口香糖', count: 40, image: '/images/gum.png' },
+      { id: 11, name: '瓜子', count: 35, image: '/images/seeds.png' },
+      { id: 12, name: '花生', count: 27, image: '/images/peanuts.png' },
+      { id: 13, name: '八宝粥', count: 12, image: '/images/porridge.png' },
+      { id: 14, name: '牛奶', count: 19, image: '/images/milk.png' },
+      { id: 15, name: '鸡蛋', count: 50, image: '/images/eggs.png' }
+    ];
+    
+    // 保存测试数据到本地存储
+    wx.setStorageSync('stallItems', stallItems);
     
     this.setData({
       stallItems: stallItems
@@ -157,6 +166,45 @@ Page({
       },
       fail: function(err) {
         console.error('售出记录保存失败', err);
+      }
+    });
+    */
+  },
+  
+  // 后台接口预留 - 加载出摊商品图片
+  loadStallProductImages: function(items) {
+    // TODO: 实际项目中调用后台API获取出摊商品图片
+    console.log('调用后台接口加载出摊商品图片：', {
+      items: items.map(item => ({
+        id: item.id,
+        name: item.name
+      }))
+    });
+    
+    // 模拟API调用
+    /*
+    wx.request({
+      url: 'https://your-api.com/api/stall/products/images',
+      method: 'POST',
+      data: {
+        productIds: items.map(item => item.id)
+      },
+      success: function(res) {
+        if (res.data && res.data.success) {
+          // 更新出摊商品图片数据
+          const imageMap = res.data.data;
+          const updatedItems = items.map(item => ({
+            ...item,
+            image: imageMap[item.id] || item.image
+          }));
+          wx.setStorageSync('stallItems', updatedItems);
+          this.setData({
+            stallItems: updatedItems
+          });
+        }
+      }.bind(this),
+      fail: function(err) {
+        console.error('加载出摊商品图片失败', err);
       }
     });
     */

@@ -1,19 +1,10 @@
 .container {
-  padding: 20rpx;
-  background-color: #f5f5f5;
+  background: var(--background);
   min-height: 100vh;
+  padding-top: 32rpx;
 }
 
-.header {
-  text-align: center;
-  margin-bottom: 20rpx;
-}
 
-.title {
-  font-size: 36rpx;
-  font-weight: 600;
-  color: #333;
-}
 
 .add-section {
   background-color: #fff;
@@ -38,71 +29,130 @@ input {
 }
 
 .list-section {
-  background-color: #fff;
-  padding: 20rpx;
-  border-radius: 12rpx;
-  margin-bottom: 20rpx;
-  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.08);
+  background: var(--card-bg);
+  padding: 32rpx;
+  border-radius: var(--radius-lg);
+  margin-bottom: 32rpx;
+  box-shadow: var(--shadow-md);
 }
 
 .section-title {
-  font-size: 30rpx;
+  font-size: 32rpx;
   font-weight: 600;
-  color: #333;
-  margin-bottom: 15rpx;
-  display: block;
+  color: var(--text-primary);
+  margin-bottom: 24rpx;
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.section-title::before {
+  content: '🛒';
+  font-size: 28rpx;
 }
 
 .item-list {
   display: flex;
   flex-direction: column;
-  gap: 15rpx;
+  gap: 16rpx;
 }
 
 .item {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 20rpx;
-  border-radius: 12rpx;
-  background-color: #fff;
-  margin-bottom: 0;
-  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.06);
-  border: 1rpx solid #f0f0f0;
-  transition: all 0.3s ease;
+  padding: 24rpx;
+  border-radius: var(--radius-md);
+  background: var(--card-bg);
+  border: 1rpx solid var(--border);
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+  gap: 16rpx;
+}
+
+.item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4rpx;
+  background: linear-gradient(180deg, var(--primary-color), var(--primary-light));
+  transform: scaleY(0);
+  transition: var(--transition);
 }
 
 .item:active {
   transform: translateY(2rpx);
-  box-shadow: 0 1rpx 4rpx rgba(0, 0, 0, 0.04);
+  box-shadow: var(--shadow-sm);
+}
+
+.item:active::before {
+  transform: scaleY(1);
+}
+
+/* 商品缩略图样式 */
+.item-image {
+  flex-shrink: 0;
+}
+
+.goods-thumbnail {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+}
+
+.item:active .goods-thumbnail {
+  transform: scale(0.95);
 }
 
 .item-info {
   display: flex;
   flex-direction: column;
-  gap: 8rpx;
+  gap: 10rpx;
+  flex: 1;
 }
 
 .item-name {
   font-size: 32rpx;
-  font-weight: 500;
-  color: #333;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: 0.5rpx;
 }
 
 .item-count {
-  font-size: 28rpx;
-  color: #666;
+  font-size: 26rpx;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.item-count::before {
+  content: '📊';
+  font-size: 20rpx;
 }
 
 .empty {
   text-align: center;
   padding: 80rpx 40rpx;
-  color: #999;
+  color: var(--text-tertiary);
   font-size: 28rpx;
-  background-color: #fff;
-  border-radius: 12rpx;
-  margin: 20rpx 0;
-  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.08);
+  background: var(--card-bg);
+  border-radius: var(--radius-md);
+  margin: 32rpx 0;
+  box-shadow: var(--shadow-md);
+  border: 2rpx dashed var(--border);
+}
+
+.empty::before {
+  content: '🛒';
+  display: block;
+  font-size: 60rpx;
+  margin-bottom: 16rpx;
+  opacity: 0.6;
 }
 
 .action-section {
@@ -113,24 +163,83 @@ input {
 
 /* 空状态提示样式 */
 .empty-tip {
-  background-color: #fff;
+  background: var(--card-bg);
   padding: 40rpx;
-  border-radius: 12rpx;
-  margin-bottom: 20rpx;
-  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.08);
+  border-radius: var(--radius-lg);
+  margin-bottom: 32rpx;
+  box-shadow: var(--shadow-md);
   text-align: center;
-  border: 1rpx dashed #07c160;
+  border: 2rpx dashed var(--primary-color);
+  position: relative;
+  overflow: hidden;
+}
+
+.empty-tip::before {
+  content: '💡';
+  position: absolute;
+  top: -20rpx;
+  right: 20rpx;
+  font-size: 40rpx;
+  opacity: 0.3;
 }
 
 .tip-text {
   font-size: 28rpx;
-  color: #07c160;
+  color: var(--primary-color);
   line-height: 1.6;
+  font-weight: 500;
 }
 
+/* 商品操作按钮样式 */
+.item-actions {
+  display: flex;
+  gap: 10rpx;
+}
+
+.item-actions button {
+  min-width: 120rpx;
+  height: 64rpx;
+  font-size: 24rpx;
+  font-weight: 500;
+  padding: 0;
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-sm);
+  width: auto;
+  transition: var(--transition);
+}
+
+.item-actions button[type="primary"] {
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+  border: none;
+  color: white;
+}
+
+.item-actions button[type="warn"] {
+  background: linear-gradient(135deg, #ff6b6b, #ff5252);
+  border: none;
+  color: white;
+}
+
+.item-actions button:active {
+  transform: scale(0.95);
+}
+
+/* 全局按钮基础样式 */
 button {
   width: 100%;
   font-size: 28rpx;
+  padding: 20rpx;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  box-shadow: var(--shadow-md);
+  transition: var(--transition);
+  box-sizing: border-box;
+  font-family: inherit;
+}
+
+button:active {
+  transform: translateY(2rpx);
+  box-shadow: var(--shadow-sm);
 }
 
 /* 售出弹框样式 */
@@ -140,72 +249,121 @@ button {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8rpx);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .modal {
-  background-color: #fff;
-  border-radius: 16rpx;
-  width: 85%;
-  max-width: 550rpx;
-  box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.15);
+  background: var(--card-bg);
+  border-radius: var(--radius-lg);
+  width: 90%;
+  max-width: 600rpx;
+  box-shadow: 0 16rpx 64rpx rgba(0, 0, 0, 0.2);
   overflow: hidden;
+  animation: slideUp 0.3s ease;
+  position: relative;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(60rpx);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.modal::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 6rpx;
+  background: linear-gradient(90deg, var(--primary-color), var(--primary-light));
 }
 
 .modal-header {
-  padding: 24rpx;
-  border-bottom: 1rpx solid #f0f0f0;
+  padding: 32rpx 24rpx 24rpx;
   text-align: center;
+  background: linear-gradient(135deg, rgba(7, 193, 96, 0.05), rgba(7, 193, 96, 0.02));
 }
 
 .modal-title {
-  font-size: 32rpx;
-  font-weight: 600;
-  color: #333;
+  font-size: 34rpx;
+  font-weight: 700;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12rpx;
+}
+
+.modal-title::before {
+  content: '💰';
+  font-size: 28rpx;
 }
 
 .modal-content {
-  padding: 30rpx 24rpx;
+  padding: 32rpx 24rpx;
 }
 
 .modal-info {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 24rpx;
-  padding: 12rpx 0;
+  align-items: center;
+  margin-bottom: 28rpx;
+  padding: 16rpx 20rpx;
+  background: rgba(7, 193, 96, 0.05);
+  border-radius: var(--radius-sm);
+  border-left: 4rpx solid var(--primary-color);
 }
 
 .modal-label {
   font-size: 28rpx;
-  color: #666;
+  color: var(--text-secondary);
   font-weight: 500;
 }
 
 .modal-value {
-  font-size: 28rpx;
-  color: #333;
-  font-weight: 600;
+  font-size: 30rpx;
+  color: var(--primary-color);
+  font-weight: 700;
 }
 
-.input-group {
-  margin-top: 24rpx;
+/* 模态框中的输入组样式 */
+.modal-content .input-group {
+  margin-top: 28rpx;
 }
 
 .input-label {
   display: block;
   font-size: 28rpx;
-  color: #666;
-  margin-bottom: 12rpx;
-  font-weight: 500;
+  color: var(--text-secondary);
+  margin-bottom: 16rpx;
+  font-weight: 600;
 }
 
 .modal-footer {
   display: flex;
-  border-top: 1rpx solid #f0f0f0;
+  border-top: 1rpx solid var(--border);
+  background: rgba(7, 193, 96, 0.02);
 }
 
 .modal-footer button {
@@ -213,27 +371,25 @@ button {
   border-radius: 0;
   margin: 0;
   border: none;
-  font-size: 30rpx;
+  font-size: 28rpx;
   padding: 24rpx;
-  font-weight: 500;
+  font-weight: 600;
+  width: auto;
+  box-shadow: none;
+  transition: var(--transition);
+  background: transparent;
+  color: var(--text-secondary);
+}
+
+.modal-footer button[type="primary"] {
+  background: var(--primary-color);
+  color: white;
+}
+
+.modal-footer button[type="primary"]:active {
+  background: var(--primary-dark);
 }
 
 .modal-footer button:first-child {
-  border-right: 1rpx solid #f0f0f0;
-}
-
-/* 调整商品操作按钮的布局 */
-.item-actions {
-  display: flex;
-  gap: 12rpx;
-}
-
-/* 优化按钮样式 */
-.item-actions button {
-  min-width: 120rpx;
-  height: 72rpx;
-  font-size: 26rpx;
-  padding: 0;
-  border-radius: 8rpx;
-  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.08);
+  border-right: 1rpx solid var(--border);
 }
