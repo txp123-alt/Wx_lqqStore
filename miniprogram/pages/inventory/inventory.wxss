@@ -558,3 +558,41 @@ input::placeholder {
 .modal-footer button:first-child {
   border-right: 1rpx solid var(--border);
 }
+
+/* 商品按钮区域样式 */
+.product-actions-section {
+  margin: 24rpx 0;
+  display: flex;
+  justify-content: center;
+}
+
+.product-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12rpx;
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+  color: white;
+  border: none;
+  border-radius: var(--radius-lg);
+  padding: 20rpx 40rpx;
+  font-size: 32rpx;
+  font-weight: 600;
+  box-shadow: var(--shadow-md);
+  transition: var(--transition);
+  min-width: 200rpx;
+}
+
+.product-btn:active {
+  transform: translateY(2rpx);
+  box-shadow: 0 2rpx 8rpx rgba(7, 193, 96, 0.3);
+}
+
+.btn-icon {
+  font-size: 32rpx;
+}
+
+.btn-text {
+  font-size: 30rpx;
+  letter-spacing: 1rpx;
+}

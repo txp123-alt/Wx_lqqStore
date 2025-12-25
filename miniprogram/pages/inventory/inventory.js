@@ -14,7 +14,8 @@ Page({
     stallCount: 0,
     totalInventoryCount: 0,
     stallItemsCount: 0,
-    totalItemsCount: 0
+    totalItemsCount: 0,
+    showAddModal: false
   },
 
   onLoad: function() {
@@ -133,6 +134,25 @@ Page({
     });
   },
 
+  // 显示商品入库弹框
+  showAddModal: function() {
+    this.setData({
+      showAddModal: true
+    });
+  },
+
+  // 隐藏商品入库弹框
+  hideAddModal: function() {
+    this.setData({
+      showAddModal: false
+    });
+  },
+
+  // 阻止事件冒泡
+  stopPropagation: function() {
+    // 空函数，仅用于阻止事件冒泡
+  },
+
   addItem: function() {
     const { name, count, cost } = this.data.newItem;
     if (!name || count <= 0 || !cost || cost <= 0) {
@@ -167,6 +187,9 @@ Page({
     wx.setStorageSync('inventoryItems', inventoryItems);
     // 更新统计数据
     this.loadData();
+
+    // 关闭弹框
+    this.hideAddModal();
 
     wx.showToast({
       title: '添加成功',

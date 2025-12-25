@@ -17,6 +17,14 @@
     </view>
   </view>
   
+  <!-- 商品按钮区域 -->
+  <view class="product-actions-section">
+    <button class="product-btn" bindtap="showAddModal">
+      <text class="btn-icon">📦</text>
+      <text class="btn-text">商品入库</text>
+    </button>
+  </view>
+
   <view class="list-section">
     <text class="section-title">库存商品列表</text>
     <view class="item-list">
@@ -38,32 +46,51 @@
       </view>
     </view>
   </view>
-  
-  <view class="add-section">
-    <view class="input-group">
-      <input type="text" placeholder="商品名称" bindinput="onNameInput" value="{{newItem.name}}" />
-      <input type="number" placeholder="初始库存" bindinput="onCountInput" value="{{newItem.count}}" />
-      <input type="digit" placeholder="商品成本（元）" bindinput="onCostInput" value="{{newItem.cost}}" />
-    </view>
-    
-    <!-- 图片上传区域 -->
-    <view class="image-upload-section">
-      <text class="upload-label">商品图片</text>
-      <view class="image-upload-container">
-        <view wx:if="{{newItem.image}}" class="image-preview">
-          <image class="preview-image" src="{{newItem.image}}" mode="aspectFill"></image>
-          <view class="remove-image" bindtap="removeImage">
-            <text class="remove-icon">×</text>
+
+  <!-- 商品入库弹框 -->
+  <view class="modal-overlay" wx:if="{{showAddModal}}" bindtap="hideAddModal">
+    <view class="modal" catchtap="stopPropagation">
+      <view class="modal-header">
+        <text class="modal-title">商品入库</text>
+      </view>
+      <view class="modal-content">
+        <view class="input-group">
+          <text class="input-label">商品名称</text>
+          <input type="text" placeholder="请输入商品名称" bindinput="onNameInput" value="{{newItem.name}}" />
+        </view>
+        
+        <view class="input-group">
+          <text class="input-label">初始库存</text>
+          <input type="number" placeholder="请输入初始库存" bindinput="onCountInput" value="{{newItem.count}}" />
+        </view>
+        
+        <view class="input-group">
+          <text class="input-label">商品成本</text>
+          <input type="digit" placeholder="请输入商品成本（元）" bindinput="onCostInput" value="{{newItem.cost}}" />
+        </view>
+        
+        <!-- 图片上传区域 -->
+        <view class="image-upload-section">
+          <text class="upload-label">商品图片</text>
+          <view class="image-upload-container">
+            <view wx:if="{{newItem.image}}" class="image-preview">
+              <image class="preview-image" src="{{newItem.image}}" mode="aspectFill"></image>
+              <view class="remove-image" bindtap="removeImage">
+                <text class="remove-icon">×</text>
+              </view>
+            </view>
+            <view wx:else class="upload-placeholder" bindtap="chooseImage">
+              <text class="upload-icon">📷</text>
+              <text class="upload-text">点击上传图片</text>
+            </view>
           </view>
         </view>
-        <view wx:else class="upload-placeholder" bindtap="chooseImage">
-          <text class="upload-icon">📷</text>
-          <text class="upload-text">点击上传图片</text>
-        </view>
+      </view>
+      <view class="modal-footer">
+        <button type="default" bindtap="hideAddModal">取消</button>
+        <button type="primary" bindtap="addItem">确认添加</button>
       </view>
     </view>
-    
-    <button type="primary" bindtap="addItem">添加到库存</button>
   </view>
 
   <!-- 添加到出摊弹框 -->
