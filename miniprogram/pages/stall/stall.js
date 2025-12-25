@@ -1,6 +1,8 @@
 Page({
   data: {
     stallItems: [],
+    filteredItems: [],
+    searchKeyword: '',
     // 售出弹框相关
     showSellModal: false,
     selectedItem: null,
@@ -29,7 +31,8 @@ Page({
     
     // 设置数据到页面
     this.setData({
-      stallItems: stallItems
+      stallItems: stallItems,
+      filteredItems: this.filterItems(stallItems, '')
     });
     
     // 保存到本地存储
@@ -39,8 +42,11 @@ Page({
   removeItem: function(e) {
     const id = e.currentTarget.dataset.id;
     const stallItems = this.data.stallItems.filter(item => item.id !== id);
+    const updatedFilteredItems = this.filterItems(stallItems, this.data.searchKeyword);
+    
     this.setData({
-      stallItems: stallItems
+      stallItems: stallItems,
+      filteredItems: updatedFilteredItems
     });
     // 保存到本地存储
     wx.setStorageSync('stallItems', stallItems);
@@ -121,9 +127,12 @@ Page({
     // 更新本地存储
     wx.setStorageSync('stallItems', updatedStallItems);
     
+    const updatedFilteredItems = this.filterItems(updatedStallItems, this.data.searchKeyword);
+    
     // 更新页面数据
     this.setData({
       stallItems: updatedStallItems,
+      filteredItems: updatedFilteredItems,
       showSellModal: false,
       selectedItem: null,
       sellCount: 0
@@ -204,5 +213,32 @@ Page({
       }
     });
     */
+  },
+
+  // 搜索输入处理
+  onSearchInput: function(e) {
+    const keyword = e.detail.value;
+    this.setData({
+      searchKeyword: keyword,
+      filteredItems: this.filterItems(this.data.stallItems, keyword)
+    });
+  },
+
+  // 清空搜索
+  clearSearch: function() {
+    this.setData({
+      searchKeyword: '',
+      filteredItems: this.data.stallItems
+    });
+  },
+
+  // 过滤商品
+  filterItems: function(items, keyword) {
+    if (!keyword.trim()) {
+      return items;
+    }
+    return items.filter(item => 
+      item.name.toLowerCase().includes(keyword.toLowerCase())
+    );
   }
 });
