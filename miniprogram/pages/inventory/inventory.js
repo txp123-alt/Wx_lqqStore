@@ -18,7 +18,14 @@ Page({
     showAddModal: false,
     summaryExpanded: false,
     searchKeyword: '',
-    filteredItems: []
+    filteredItems: [],
+    // 新增统计数据字段
+    totalCost: '0.00',
+    stallCost: '0.00',
+    totalInventoryValue: '0.00',
+    totalRevenue: '0.00',
+    totalProfit: '0.00',
+    todayProfit: '0.00'
   },
 
   onLoad: function() {
@@ -61,10 +68,29 @@ Page({
     // 预留：加载商品图片的后台接口
     this.loadProductImages(inventoryItems);
 
-    // 计算库存统计
-    const totalInventoryCount = inventoryItems.reduce((total, item) => total + item.count, 0);
-    const stallItemsCount = stallItems.reduce((total, item) => total + item.count, 0);
+    // 计算各项统计数据
+    const totalInventoryCount = inventoryItems.reduce((total, item) => total + (item.count || 0), 0);
+    const stallItemsCount = stallItems.reduce((total, item) => total + (item.count || 0), 0);
     const totalItemsCount = totalInventoryCount + stallItemsCount;
+    
+    // 计算成本数据
+    const totalInventoryCost = inventoryItems.reduce((total, item) => total + ((item.cost || 0) * (item.count || 0)), 0);
+    const totalStallCost = stallItems.reduce((total, item) => total + ((item.cost || 0) * (item.count || 0)), 0);
+    const totalCost = totalInventoryCost + totalStallCost;
+    
+    // 模拟数据计算（实际项目中需要从售出记录中获取）
+    const totalRevenue = 1250.50; // 模拟总收入
+    const totalProfit = totalRevenue - totalCost; // 总利润
+    const todayProfit = 158.80; // 模拟今日利润
+    
+    const formattedData = {
+      totalCost: totalCost.toFixed(2),
+      stallCost: totalStallCost.toFixed(2),
+      totalInventoryValue: totalInventoryCost.toFixed(2),
+      totalRevenue: totalRevenue.toFixed(2),
+      totalProfit: totalProfit.toFixed(2),
+      todayProfit: todayProfit.toFixed(2)
+    };
 
     this.setData({
       inventoryItems: inventoryItems,
@@ -72,6 +98,7 @@ Page({
       totalInventoryCount: totalInventoryCount,
       stallItemsCount: stallItemsCount,
       totalItemsCount: totalItemsCount,
+      ...formattedData,
       filteredItems: this.filterItems(inventoryItems, this.data.searchKeyword)
     });
   },
@@ -212,10 +239,39 @@ Page({
 
     const inventoryItems = [...this.data.inventoryItems, newItem];
     const updatedFilteredItems = this.filterItems(inventoryItems, this.data.searchKeyword);
+
+    // 保存到本地存储
+    wx.setStorageSync('inventoryItems', inventoryItems);
+    
+    // 重新计算统计数据
+    const totalInventoryCount = inventoryItems.reduce((total, item) => total + (item.count || 0), 0);
+    const stallItemsCount = this.data.stallItems.reduce((total, item) => total + (item.count || 0), 0);
+    const totalItemsCount = totalInventoryCount + stallItemsCount;
+    
+    const totalInventoryCost = inventoryItems.reduce((total, item) => total + ((item.cost || 0) * (item.count || 0)), 0);
+    const totalStallCost = this.data.stallItems.reduce((total, item) => total + ((item.cost || 0) * (item.count || 0)), 0);
+    const totalCost = totalInventoryCost + totalStallCost;
+    
+    const totalRevenue = 1250.50;
+    const totalProfit = totalRevenue - totalCost;
+    const todayProfit = 158.80;
+    
+    const formattedData = {
+      totalCost: totalCost.toFixed(2),
+      stallCost: totalStallCost.toFixed(2),
+      totalInventoryValue: totalInventoryCost.toFixed(2),
+      totalRevenue: totalRevenue.toFixed(2),
+      totalProfit: totalProfit.toFixed(2),
+      todayProfit: todayProfit.toFixed(2)
+    };
     
     this.setData({
       inventoryItems: inventoryItems,
       filteredItems: updatedFilteredItems,
+      totalInventoryCount: totalInventoryCount,
+      stallItemsCount: stallItemsCount,
+      totalItemsCount: totalItemsCount,
+      ...formattedData,
       newItem: {
         name: '',
         count: 0,
@@ -223,11 +279,6 @@ Page({
         image: ''
       }
     });
-
-    // 保存到本地存储
-    wx.setStorageSync('inventoryItems', inventoryItems);
-    // 更新统计数据
-    this.loadData();
 
     // 关闭弹框
     this.hideAddModal();

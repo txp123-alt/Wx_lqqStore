@@ -658,15 +658,89 @@ input::placeholder {
   margin-left: 16rpx;
 }
 
-/* 详细模式样式 */
-.summary-detail {
+/* 详细模式 - 9宫格样式 */
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20rpx;
   position: relative;
+  padding-right: 40rpx;
+}
+
+.grid-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24rpx 16rpx;
+  background: linear-gradient(135deg, rgba(7, 193, 96, 0.03), rgba(7, 193, 96, 0.08));
+  border-radius: var(--radius-md);
+  border: 1rpx solid rgba(7, 193, 96, 0.15);
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+
+.grid-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3rpx;
+  background: linear-gradient(90deg, var(--primary-color), var(--primary-light));
+  transform: scaleX(0);
+  transition: var(--transition);
+}
+
+.grid-item:active {
+  transform: translateY(2rpx);
+  box-shadow: var(--shadow-sm);
+}
+
+.grid-item:active::before {
+  transform: scaleX(1);
+}
+
+.grid-item.highlight {
+  background: linear-gradient(135deg, rgba(255, 193, 7, 0.08), rgba(255, 193, 7, 0.12));
+  border: 1rpx solid rgba(255, 193, 7, 0.25);
+}
+
+.grid-item.highlight::before {
+  background: linear-gradient(90deg, #ffc107, #ffb300);
+}
+
+.grid-icon {
+  font-size: 36rpx;
+  margin-bottom: 8rpx;
+  display: block;
+}
+
+.grid-value {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: var(--primary-color);
+  margin-bottom: 4rpx;
+  display: block;
+}
+
+.grid-item.highlight .grid-value {
+  color: #ff9800;
+}
+
+.grid-label {
+  font-size: 22rpx;
+  color: var(--text-secondary);
+  text-align: center;
+  display: block;
+  line-height: 1.2;
 }
 
 .collapse-icon {
   position: absolute;
   right: 0;
-  top: 32rpx;
+  top: 16rpx;
   font-size: 24rpx;
   color: var(--text-tertiary);
 }
@@ -674,6 +748,21 @@ input::placeholder {
 /* 调整详细模式下标题位置 */
 .summary-section.expanded .summary-title {
   padding-right: 40rpx;
+}
+
+/* 响应式调整 - 小屏幕下改为2列或1列 */
+@media (max-width: 750rpx) {
+  .summary-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16rpx;
+  }
+}
+
+@media (max-width: 500rpx) {
+  .summary-grid {
+    grid-template-columns: 1fr;
+    gap: 12rpx;
+  }
 }
 
 /* 搜索功能样式 */

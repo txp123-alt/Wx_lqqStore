@@ -23,19 +23,55 @@
       <text class="expand-icon">▼</text>
     </view>
     
-    <!-- 详细模式 -->
-    <view wx:else class="summary-detail">
-      <view class="summary-item">
-        <text class="summary-label">库存商品:</text>
-        <text class="summary-value">{{totalInventoryCount}} 件</text>
+    <!-- 详细模式 - 9宫格展示 -->
+    <view wx:else class="summary-grid">
+      <!-- 第一行 -->
+      <view class="grid-item">
+        <text class="grid-icon">📦</text>
+        <text class="grid-value">{{totalInventoryCount}}</text>
+        <text class="grid-label">库存商品</text>
       </view>
-      <view class="summary-item">
-        <text class="summary-label">出摊商品:</text>
-        <text class="summary-value">{{stallItemsCount}} 件</text>
+      <view class="grid-item">
+        <text class="grid-icon">🛒</text>
+        <text class="grid-value">{{stallItemsCount}}</text>
+        <text class="grid-label">出摊商品</text>
       </view>
-      <view class="summary-item">
-        <text class="summary-label">总量:</text>
-        <text class="summary-value">{{totalItemsCount}} 件</text>
+      <view class="grid-item">
+        <text class="grid-icon">📊</text>
+        <text class="grid-value">{{totalItemsCount}}</text>
+        <text class="grid-label">总数量</text>
+      </view>
+      <!-- 第二行 -->
+      <view class="grid-item">
+        <text class="grid-icon">💰</text>
+        <text class="grid-value">{{totalCost}}</text>
+        <text class="grid-label">总成本(元)</text>
+      </view>
+      <view class="grid-item">
+        <text class="grid-icon">🛍️</text>
+        <text class="grid-value">{{stallCost}}</text>
+        <text class="grid-label">出摊成本(元)</text>
+      </view>
+      <view class="grid-item">
+        <text class="grid-icon">📈</text>
+        <text class="grid-value">{{totalProfit}}</text>
+        <text class="grid-label">总利润(元)</text>
+      </view>
+      <!-- 第三行 -->
+      <view class="grid-item highlight">
+        <text class="grid-icon">🌟</text>
+        <text class="grid-value">{{todayProfit}}</text>
+        <text class="grid-label">今日利润(元)</text>
+      </view>
+      <view class="grid-item">
+        <text class="grid-icon">💵</text>
+        <text class="grid-value">{{totalRevenue}}</text>
+        <text class="grid-label">总收入(元)</text>
+      </view>
+      <view class="grid-item">
+        <text class="grid-icon">🏪</text>
+        <text class="grid-value">{{totalInventoryValue}}</text>
+        <text class="grid-label">库存价值(元)</text>
       </view>
       <text class="collapse-icon">▲</text>
     </view>
