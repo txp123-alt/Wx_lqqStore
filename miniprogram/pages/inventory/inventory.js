@@ -15,7 +15,10 @@ Page({
     totalInventoryCount: 0,
     stallItemsCount: 0,
     totalItemsCount: 0,
-    showAddModal: false
+    showAddModal: false,
+    summaryExpanded: false,
+    searchKeyword: '',
+    filteredItems: []
   },
 
   onLoad: function() {
@@ -68,7 +71,8 @@ Page({
       stallItems: stallItems,
       totalInventoryCount: totalInventoryCount,
       stallItemsCount: stallItemsCount,
-      totalItemsCount: totalItemsCount
+      totalItemsCount: totalItemsCount,
+      filteredItems: this.filterItems(inventoryItems, this.data.searchKeyword)
     });
   },
 
@@ -153,6 +157,40 @@ Page({
     // 空函数，仅用于阻止事件冒泡
   },
 
+  // 切换统计信息展开/收起
+  toggleSummary: function() {
+    this.setData({
+      summaryExpanded: !this.data.summaryExpanded
+    });
+  },
+
+  // 搜索输入处理
+  onSearchInput: function(e) {
+    const keyword = e.detail.value;
+    this.setData({
+      searchKeyword: keyword,
+      filteredItems: this.filterItems(this.data.inventoryItems, keyword)
+    });
+  },
+
+  // 清空搜索
+  clearSearch: function() {
+    this.setData({
+      searchKeyword: '',
+      filteredItems: this.data.inventoryItems
+    });
+  },
+
+  // 过滤商品
+  filterItems: function(items, keyword) {
+    if (!keyword.trim()) {
+      return items;
+    }
+    return items.filter(item => 
+      item.name.toLowerCase().includes(keyword.toLowerCase())
+    );
+  },
+
   addItem: function() {
     const { name, count, cost } = this.data.newItem;
     if (!name || count <= 0 || !cost || cost <= 0) {
@@ -173,8 +211,11 @@ Page({
     };
 
     const inventoryItems = [...this.data.inventoryItems, newItem];
+    const updatedFilteredItems = this.filterItems(inventoryItems, this.data.searchKeyword);
+    
     this.setData({
       inventoryItems: inventoryItems,
+      filteredItems: updatedFilteredItems,
       newItem: {
         name: '',
         count: 0,
