@@ -15,6 +15,7 @@
         <view class="item-info">
           <text class="item-name">{{item.name}}</text>
           <text class="item-count">数量: {{item.count}}</text>
+          <text class="item-cost">成本: ¥{{item.cost ? item.cost.toFixed(2) : '0.00'}}</text>
         </view>
         <view class="item-actions">
           <button size="mini" type="warn" bindtap="removeItem" data-id="{{item.id}}">删除</button>

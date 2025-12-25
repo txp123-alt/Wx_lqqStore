@@ -4,7 +4,8 @@ Page({
     stallItems: [],
     newItem: {
       name: '',
-      count: 0
+      count: 0,
+      cost: ''
     },
     // 添加到出摊弹框相关
     showAddToStallModal: false,
@@ -32,21 +33,21 @@ Page({
     // 如果没有数据，添加测试数据
     if (inventoryItems.length === 0) {
       const testItems = [
-        { id: 1, name: '矿泉水', count: 20, image: '/images/water.png' },
-        { id: 2, name: '方便面', count: 15, image: '/images/noodles.png' },
-        { id: 3, name: '面包', count: 10, image: '/images/bread.png' },
-        { id: 4, name: '火腿肠', count: 25, image: '/images/sausage.png' },
-        { id: 5, name: '薯片', count: 18, image: '/images/chips.png' },
-        { id: 6, name: '可乐', count: 30, image: '/images/cola.png' },
-        { id: 7, name: '雪碧', count: 22, image: '/images/sprite.png' },
-        { id: 8, name: '果汁', count: 15, image: '/images/juice.png' },
-        { id: 9, name: '饼干', count: 28, image: '/images/cookies.png' },
-        { id: 10, name: '巧克力', count: 12, image: '/images/chocolate.png' },
-        { id: 11, name: '糖果', count: 40, image: '/images/candy.png' },
-        { id: 12, name: '坚果', count: 25, image: '/images/nuts.png' },
-        { id: 13, name: '口香糖', count: 35, image: '/images/gum.png' },
-        { id: 14, name: '咖啡', count: 18, image: '/images/coffee.png' },
-        { id: 15, name: '奶茶', count: 22, image: '/images/milktea.png' }
+        { id: 1, name: '矿泉水', count: 20, cost: 2.5, image: '/images/water.png' },
+        { id: 2, name: '方便面', count: 15, cost: 3.5, image: '/images/noodles.png' },
+        { id: 3, name: '面包', count: 10, cost: 8.0, image: '/images/bread.png' },
+        { id: 4, name: '火腿肠', count: 25, cost: 1.5, image: '/images/sausage.png' },
+        { id: 5, name: '薯片', count: 18, cost: 6.0, image: '/images/chips.png' },
+        { id: 6, name: '可乐', count: 30, cost: 3.0, image: '/images/cola.png' },
+        { id: 7, name: '雪碧', count: 22, cost: 3.0, image: '/images/sprite.png' },
+        { id: 8, name: '果汁', count: 15, cost: 4.5, image: '/images/juice.png' },
+        { id: 9, name: '饼干', count: 28, cost: 5.5, image: '/images/cookies.png' },
+        { id: 10, name: '巧克力', count: 12, cost: 8.5, image: '/images/chocolate.png' },
+        { id: 11, name: '糖果', count: 40, cost: 0.5, image: '/images/candy.png' },
+        { id: 12, name: '坚果', count: 25, cost: 12.0, image: '/images/nuts.png' },
+        { id: 13, name: '口香糖', count: 35, cost: 1.0, image: '/images/gum.png' },
+        { id: 14, name: '咖啡', count: 18, cost: 15.0, image: '/images/coffee.png' },
+        { id: 15, name: '奶茶', count: 22, cost: 7.0, image: '/images/milktea.png' }
       ];
       inventoryItems = testItems;
       wx.setStorageSync('inventoryItems', inventoryItems);
@@ -81,11 +82,17 @@ Page({
     });
   },
 
+  onCostInput: function(e) {
+    this.setData({
+      'newItem.cost': e.detail.value
+    });
+  },
+
   addItem: function() {
-    const { name, count } = this.data.newItem;
-    if (!name || count <= 0) {
+    const { name, count, cost } = this.data.newItem;
+    if (!name || count <= 0 || !cost || cost <= 0) {
       wx.showToast({
-        title: '请输入商品名称和库存数量',
+        title: '请输入商品名称、库存数量和成本',
         icon: 'none'
       });
       return;
@@ -96,6 +103,7 @@ Page({
       id: Date.now(),
       name: name,
       count: count,
+      cost: parseFloat(cost),
       image: '/images/default-goods-image.png' // 默认图片，后续可通过后台接口更新
     };
 
@@ -104,7 +112,8 @@ Page({
       inventoryItems: inventoryItems,
       newItem: {
         name: '',
-        count: 0
+        count: 0,
+        cost: ''
       }
     });
 

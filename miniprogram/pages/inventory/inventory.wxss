@@ -182,6 +182,34 @@
   font-size: 20rpx;
 }
 
+.item-cost {
+  font-size: 26rpx;
+  color: #ff6b6b;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.item-cost::before {
+  content: '💰';
+  font-size: 20rpx;
+}
+
+.item-cost {
+  font-size: 26rpx;
+  color: #ff6b6b;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.item-cost::before {
+  content: '💰';
+  font-size: 20rpx;
+}
+
 /* 商品操作按钮样式 */
 .item-actions {
   display: flex;
@@ -292,6 +320,93 @@ input::placeholder {
 .add-section button[type="primary"]:active {
   transform: translateY(2rpx);
   box-shadow: 0 2rpx 8rpx rgba(7, 193, 96, 0.3);
+}
+
+/* 图片上传区域样式 */
+.image-upload-section {
+  margin: 24rpx 0;
+}
+
+.upload-label {
+  display: block;
+  font-size: 28rpx;
+  color: var(--text-secondary);
+  margin-bottom: 16rpx;
+  font-weight: 600;
+}
+
+.image-upload-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 24rpx;
+}
+
+.image-preview {
+  position: relative;
+  width: 200rpx;
+  height: 200rpx;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+}
+
+.preview-image {
+  width: 100%;
+  height: 100%;
+  border-radius: var(--radius-md);
+}
+
+.remove-image {
+  position: absolute;
+  top: -10rpx;
+  right: -10rpx;
+  width: 40rpx;
+  height: 40rpx;
+  background: #ff4757;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 4rpx 12rpx rgba(255, 71, 87, 0.4);
+  z-index: 10;
+}
+
+.remove-icon {
+  color: white;
+  font-size: 28rpx;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.upload-placeholder {
+  width: 200rpx;
+  height: 200rpx;
+  border: 3rpx dashed var(--border);
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: rgba(7, 193, 96, 0.05);
+  transition: var(--transition);
+  gap: 12rpx;
+}
+
+.upload-placeholder:active {
+  background: rgba(7, 193, 96, 0.1);
+  border-color: var(--primary-color);
+  transform: scale(0.95);
+}
+
+.upload-icon {
+  font-size: 48rpx;
+  opacity: 0.8;
+}
+
+.upload-text {
+  font-size: 24rpx;
+  color: var(--text-tertiary);
+  text-align: center;
 }
 
 /* 模态框样式 */

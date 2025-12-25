@@ -27,6 +27,7 @@
         <view class="item-info">
           <text class="item-name">{{item.name}}</text>
           <text class="item-count">库存数量: {{item.count}}</text>
+          <text class="item-cost">成本: ¥{{item.cost}}</text>
         </view>
         <view class="item-actions">
           <button size="mini" type="primary" bindtap="showAddToStallModal" data-id="{{item.id}}">添加到出摊</button>
@@ -42,6 +43,7 @@
     <view class="input-group">
       <input type="text" placeholder="商品名称" bindinput="onNameInput" value="{{newItem.name}}" />
       <input type="number" placeholder="初始库存" bindinput="onCountInput" value="{{newItem.count}}" />
+      <input type="digit" placeholder="商品成本（元）" bindinput="onCostInput" value="{{newItem.cost}}" />
     </view>
     <button type="primary" bindtap="addItem">添加到库存</button>
   </view>
