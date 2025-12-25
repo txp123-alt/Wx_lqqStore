@@ -5,7 +5,8 @@ Page({
     newItem: {
       name: '',
       count: 0,
-      cost: ''
+      cost: '',
+      image: ''
     },
     // 添加到出摊弹框相关
     showAddToStallModal: false,
@@ -88,6 +89,50 @@ Page({
     });
   },
 
+  // 选择图片
+  chooseImage: function() {
+    wx.chooseImage({
+      count: 1,
+      sizeType: ['compressed'],
+      sourceType: ['album', 'camera'],
+      success: (res) => {
+        const tempFilePath = res.tempFilePaths[0];
+        this.uploadImage(tempFilePath);
+      }
+    });
+  },
+
+  // 上传图片到云存储
+  uploadImage: function(filePath) {
+    wx.cloud.uploadFile({
+      cloudPath: `products/${Date.now()}-${Math.random().toString(36).substr(2, 9)}.jpg`,
+      filePath: filePath,
+      success: (res) => {
+        this.setData({
+          'newItem.image': res.fileID
+        });
+        wx.showToast({
+          title: '图片上传成功',
+          icon: 'success'
+        });
+      },
+      fail: (err) => {
+        console.error('图片上传失败:', err);
+        wx.showToast({
+          title: '图片上传失败',
+          icon: 'error'
+        });
+      }
+    });
+  },
+
+  // 移除图片
+  removeImage: function() {
+    this.setData({
+      'newItem.image': ''
+    });
+  },
+
   addItem: function() {
     const { name, count, cost } = this.data.newItem;
     if (!name || count <= 0 || !cost || cost <= 0) {
@@ -104,7 +149,7 @@ Page({
       name: name,
       count: count,
       cost: parseFloat(cost),
-      image: '/images/default-goods-image.png' // 默认图片，后续可通过后台接口更新
+      image: this.data.newItem.image || '/images/default-goods-image.png' // 使用上传的图片或默认图片
     };
 
     const inventoryItems = [...this.data.inventoryItems, newItem];
@@ -113,7 +158,8 @@ Page({
       newItem: {
         name: '',
         count: 0,
-        cost: ''
+        cost: '',
+        image: ''
       }
     });
 
