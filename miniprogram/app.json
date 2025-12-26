@@ -1,29 +1,36 @@
 {
   "pages": [
+    "pages/home/home",
     "pages/stall/stall",
     "pages/inventory/inventory"
   ],
   "window": {
-    "backgroundColor": "#F6F6F6",
+    "backgroundColor": "#667eea",
     "backgroundTextStyle": "light",
-    "navigationBarBackgroundColor": "#F6F6F6",
-    "navigationBarTitleText": "出摊小助手",
-    "navigationBarTextStyle": "black"
+    "navigationBarBackgroundColor": "#667eea",
+    "navigationBarTitleText": "摆摊平台",
+    "navigationBarTextStyle": "white"
   },
   "tabBar": {
     "color": "#666666",
-    "selectedColor": "#07c160",
+    "selectedColor": "#667eea",
     "backgroundColor": "#ffffff",
     "list": [
       {
+        "pagePath": "pages/home/home",
+        "text": "首页",
+        "iconPath": "images/icons/home.png",
+        "selectedIconPath": "images/icons/home-active.png"
+      },
+      {
         "pagePath": "pages/stall/stall",
-        "text": "本次出摊",
+        "text": "出摊",
         "iconPath": "images/icons/business.png",
         "selectedIconPath": "images/icons/business-active.png"
       },
       {
         "pagePath": "pages/inventory/inventory",
-        "text": "库存仓储",
+        "text": "库存",
         "iconPath": "images/icons/goods.png",
         "selectedIconPath": "images/icons/goods-active.png"
       }

@@ -1,0 +1,126 @@
+<view class="home-container">
+  <!-- 背景装饰 -->
+  <view class="bg-decoration">
+    <view class="bg-circle bg-circle-1"></view>
+    <view class="bg-circle bg-circle-2"></view>
+    <view class="bg-circle bg-circle-3"></view>
+  </view>
+
+  <!-- 顶部欢迎区域 -->
+  <view class="welcome-section">
+    <view class="user-info">
+      <image class="user-avatar" src="{{userInfo.avatarUrl || '/images/default-avatar.png'}}" mode="aspectFill"></image>
+      <view class="user-details">
+        <text class="greeting">你好，{{userInfo.nickName || '摊主'}}</text>
+        <text class="subtitle">开启今天的摆摊之旅吧～</text>
+      </view>
+    </view>
+    <view class="weather-info">
+      <text class="weather-icon">☀️</text>
+      <text class="weather-text">适合摆摊</text>
+    </view>
+  </view>
+
+  <!-- 快速统计卡片 -->
+  <view class="stats-cards">
+    <view class="stat-card">
+      <text class="stat-icon">🛍️</text>
+      <view class="stat-content">
+        <text class="stat-number">{{todaySales || 0}}</text>
+        <text class="stat-label">今日售出</text>
+      </view>
+    </view>
+    <view class="stat-card">
+      <text class="stat-icon">💰</text>
+      <view class="stat-content">
+        <text class="stat-number">¥{{todayRevenue || '0.00'}}</text>
+        <text class="stat-label">今日收入</text>
+      </view>
+    </view>
+    <view class="stat-card">
+      <text class="stat-icon">👥</text>
+      <view class="stat-content">
+        <text class="stat-number">{{visitorCount || 0}}</text>
+        <text class="stat-label">访客数量</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 主要功能区域 -->
+  <view class="main-actions">
+    <view class="action-title">
+      <text class="title-text">选择你的下一步</text>
+      <text class="title-desc">开始经营你的小摊生意</text>
+    </view>
+
+    <!-- 功能卡片 -->
+    <view class="action-cards">
+      <!-- 我的小摊 -->
+      <view class="action-card primary" bindtap="goToMyStall">
+        <view class="card-content">
+          <view class="card-icon-wrapper">
+            <text class="card-icon">🏪</text>
+          </view>
+          <view class="card-text">
+            <text class="card-title">我的小摊</text>
+            <text class="card-desc">管理商品、查看订单</text>
+          </view>
+          <view class="card-badge" wx:if="{{hasStall}}">
+            <text class="badge-text">已创建</text>
+          </view>
+        </view>
+        <view class="card-arrow">→</view>
+      </view>
+
+      <!-- 逛逛其他小摊 -->
+      <view class="action-card secondary" bindtap="browseStalls">
+        <view class="card-content">
+          <view class="card-icon-wrapper">
+            <text class="card-icon">🚶</text>
+          </view>
+          <view class="card-text">
+            <text class="card-title">逛逛其他小摊</text>
+            <text class="card-desc">发现附近有趣的小摊</text>
+          </view>
+          <view class="card-badge hot">
+            <text class="badge-text">热门</text>
+          </view>
+        </view>
+        <view class="card-arrow">→</view>
+      </view>
+
+      <!-- 创建小摊 -->
+      <view class="action-card tertiary" bindtap="createStall">
+        <view class="card-content">
+          <view class="card-icon-wrapper">
+            <text class="card-icon">✨</text>
+          </view>
+          <view class="card-text">
+            <text class="card-title">创建小摊</text>
+            <text class="card-desc">开启你的摆摊事业</text>
+          </view>
+          <view class="card-badge new">
+            <text class="badge-text">新建</text>
+          </view>
+        </view>
+        <view class="card-arrow">→</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部快捷功能 -->
+  <view class="quick-actions">
+    <view class="quick-action" bindtap="goToInventory">
+      <text class="quick-icon">📦</text>
+      <text class="quick-text">库存管理</text>
+    </view>
+    <view class="quick-action" bindtap="goToSales">
+      <text class="quick-icon">📊</text>
+      <text class="quick-text">销售统计</text>
+    </view>
+    <view class="quick-action" bindtap="goToProfile">
+      <text class="quick-icon">⚙️</text>
+      <text class="quick-text">个人中心</text>
+    </view>
+  </view>
+</view>
