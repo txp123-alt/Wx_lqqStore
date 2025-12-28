@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "商品预定",
+  "navigationBarBackgroundColor": "#667eea",
+  "navigationBarTextStyle": "white",
+  "backgroundColor": "#f5f7fa",
+  "enablePullDownRefresh": true
+}

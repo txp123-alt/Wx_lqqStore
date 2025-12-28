@@ -9,10 +9,10 @@
   <!-- 顶部欢迎区域 -->
   <view class="welcome-section">
     <view class="user-info">
-      <image class="user-avatar" src="{{userInfo.avatarUrl || '/images/default-avatar.png'}}" mode="aspectFill"></image>
+      <image class="user-avatar" src="{{userInfo.avatarUrl || '/images/avatar.png'}}" mode="aspectFill" bindtap="editProfile"></image>
       <view class="user-details">
         <text class="greeting">你好，{{userInfo.nickName || '摊主'}}</text>
-        <text class="subtitle">开启今天的摆摊之旅吧～</text>
+        <text class="subtitle">欢迎使用摆摊平台</text>
       </view>
     </view>
     <view class="weather-info">

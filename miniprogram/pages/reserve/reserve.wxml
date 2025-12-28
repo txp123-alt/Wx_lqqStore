@@ -1,0 +1,202 @@
+<view class="reserve-container">
+  <!-- 顶部搜索区域 -->
+  <view class="search-section">
+    <view class="search-box">
+      <view class="search-input-wrapper">
+        <text class="search-icon">🔍</text>
+        <input 
+          class="search-input" 
+          placeholder="搜索商品名称..." 
+          value="{{searchKeyword}}"
+          bindinput="onSearchInput"
+          bindconfirm="onSearchConfirm"
+        />
+        <text class="clear-icon" wx:if="{{searchKeyword}}" bindtap="onClearSearch">✕</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 分类标签 -->
+  <view class="category-section">
+    <scroll-view class="category-scroll" scroll-x="true">
+      <view class="category-list">
+        <view 
+          class="category-item {{currentCategory === item.id ? 'active' : ''}}"
+          wx:for="{{categories}}" 
+          wx:key="id"
+          data-id="{{item.id}}"
+          bindtap="onCategoryChange"
+        >
+          <text class="category-icon">{{item.icon}}</text>
+          <text class="category-name">{{item.name}}</text>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 加载状态 -->
+  <view class="loading-container" wx:if="{{isLoading}}">
+    <view class="loading-spinner"></view>
+    <text class="loading-text">加载中...</text>
+  </view>
+
+  <!-- 商品列表 -->
+  <view class="product-list" wx:else>
+    <view class="empty-state" wx:if="{{filteredList.length === 0}}">
+      <text class="empty-icon">📦</text>
+      <text class="empty-text">暂无可预订商品</text>
+      <text class="empty-desc">请稍后再试或调整筛选条件</text>
+    </view>
+
+    <view 
+      class="product-item" 
+      wx:for="{{filteredList}}" 
+      wx:key="id"
+      data-product="{{item}}"
+      bindtap="onReserveProduct"
+    >
+      <view class="product-image">
+        <image src="{{item.image}}" mode="aspectFill"></image>
+        <view class="stock-badge">库存{{item.stock}}{{item.unit}}</view>
+      </view>
+      
+      <view class="product-info">
+        <view class="product-name">{{item.name}}</view>
+        <view class="product-category">
+          <text class="category-tag">
+            {{item.categoryIcon || '📦'}} {{item.categoryName || item.category}}
+          </text>
+        </view>
+        
+        <view class="product-footer">
+          <view class="price-section">
+            <text class="price-symbol">¥</text>
+            <text class="price-value">{{formatPrice(item.price)}}</text>
+            <text class="price-unit">/{{item.unit}}</text>
+          </view>
+          
+          <view class="reserve-btn">
+            <text class="btn-text">预定</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 预定弹窗 -->
+  <view class="modal-mask" wx:if="{{showReserveModal}}" bindtap="onCloseReserveModal">
+    <view class="reserve-modal" catchtap="">
+      <view class="modal-header">
+        <text class="modal-title">预定商品</text>
+        <text class="close-btn" bindtap="onCloseReserveModal">✕</text>
+      </view>
+
+      <view class="modal-content">
+        <!-- 商品信息 -->
+        <view class="product-summary">
+          <image class="product-thumb" src="{{selectedProduct.image}}" mode="aspectFill"></image>
+          <view class="product-detail">
+            <text class="product-title">{{selectedProduct.name}}</text>
+            <text class="product-price">¥{{formatPrice(selectedProduct.price)}}/{{selectedProduct.unit}}</text>
+            <text class="stock-info">库存：{{selectedProduct.stock}}{{selectedProduct.unit}}</text>
+          </view>
+        </view>
+
+        <!-- 预定表单 -->
+        <view class="reserve-form">
+          <!-- 预定数量 -->
+          <view class="form-item">
+            <text class="form-label">预定数量</text>
+            <view class="quantity-control">
+              <button class="quantity-btn minus" bindtap="onQuantityMinus">-</button>
+              <input 
+                class="quantity-input" 
+                type="number" 
+                value="{{reserveForm.quantity}}"
+                bindinput="onQuantityChange"
+              />
+              <button class="quantity-btn plus" bindtap="onQuantityPlus">+</button>
+            </view>
+          </view>
+
+          <!-- 配送时间 -->
+          <view class="form-item">
+            <text class="form-label">配送时间 *</text>
+            <picker 
+              mode="datetime" 
+              value="{{reserveForm.deliveryTime}}"
+              bindchange="onDeliveryTimeChange"
+              start="{{getMinDateTime()}}"
+            >
+              <view class="picker-wrapper">
+                <text class="picker-text {{reserveForm.deliveryTime ? '' : 'placeholder'}}">
+                  {{reserveForm.deliveryTime || '请选择配送时间'}}
+                </text>
+                <text class="picker-arrow">›</text>
+              </view>
+            </picker>
+          </view>
+
+          <!-- 配送地址 -->
+          <view class="form-item">
+            <text class="form-label">配送地址 *</text>
+            <textarea 
+              class="form-textarea" 
+              placeholder="请输入详细配送地址"
+              value="{{reserveForm.deliveryAddress}}"
+              bindinput="onDeliveryAddressInput"
+              maxlength="100"
+            />
+          </view>
+
+          <!-- 联系电话 -->
+          <view class="form-item">
+            <text class="form-label">联系电话 *</text>
+            <input 
+              class="form-input" 
+              type="number" 
+              placeholder="请输入联系电话"
+              value="{{reserveForm.contactPhone}}"
+              bindinput="onContactPhoneInput"
+              maxlength="11"
+            />
+          </view>
+
+          <!-- 备注 -->
+          <view class="form-item">
+            <text class="form-label">备注信息</text>
+            <textarea 
+              class="form-textarea" 
+              placeholder="有什么特殊要求请在此说明"
+              value="{{reserveForm.remark}}"
+              bindinput="onRemarkInput"
+              maxlength="200"
+            />
+          </view>
+
+          <!-- 费用明细 -->
+          <view class="cost-summary">
+            <view class="cost-item">
+              <text class="cost-label">商品单价</text>
+              <text class="cost-value">¥{{formatPrice(selectedProduct.price)}}/{{selectedProduct.unit}}</text>
+            </view>
+            <view class="cost-item">
+              <text class="cost-label">预定数量</text>
+              <text class="cost-value">{{reserveForm.quantity}}{{selectedProduct.unit}}</text>
+            </view>
+            <view class="cost-divider"></view>
+            <view class="cost-item total">
+              <text class="cost-label">总计</text>
+              <text class="cost-value total-price">¥{{calculateTotalPrice()}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <view class="modal-footer">
+        <button class="cancel-btn" bindtap="onCloseReserveModal">取消</button>
+        <button class="submit-btn" bindtap="onSubmitReserve">确认预定</button>
+      </view>
+    </view>
+  </view>
+</view>

@@ -1,61 +1,62 @@
+// 获取应用实例
+const app = getApp();
+
 Page({
   data: {
     userInfo: {},
     todaySales: 0,
     todayRevenue: '0.00',
     visitorCount: 0,
-    hasStall: false
+    hasStall: false,
+    userMenus: [] // 用户权限菜单
   },
 
   onLoad: function() {
-    this.loadUserInfo();
-    this.loadTodayStats();
-    this.checkStallStatus();
+    // 页面加载时加载用户信息和页面数据
+    this.loadPageData();
   },
 
   onShow: function() {
-    // 每次显示页面时刷新统计数据
-    this.loadTodayStats();
+    // 每次显示页面时刷新数据
+    this.loadPageData();
+  },
+
+  // 加载页面数据
+  loadPageData: function() {
+    // 加载用户信息（现在是自动的）
+    this.loadUserInfo();
+    
+    // 如果已登录，加载需要登录状态的数据
+    if (app.isLoggedIn()) {
+      this.loadTodayStats();
+      this.checkStallStatus();
+      this.loadUserMenus();
+    } else {
+      console.log('用户正在登录中或登录失败，稍后会自动加载数据');
+      // 等待登录完成后重新加载数据
+      setTimeout(() => {
+        if (app.isLoggedIn()) {
+          this.loadPageData();
+        }
+      }, 2000);
+    }
   },
 
   // 加载用户信息
   loadUserInfo: function() {
-    // 获取缓存的用户信息
-    const cachedUserInfo = wx.getStorageSync('userInfo');
-    if (cachedUserInfo) {
+    const userInfo = app.getUserInfo();
+    if (userInfo) {
       this.setData({
-        userInfo: cachedUserInfo
+        userInfo: userInfo
       });
-    }
-
-    // 如果没有缓存的用户信息，尝试获取用户授权
-    if (!cachedUserInfo) {
-      this.getUserProfile();
     }
   },
 
-  // 获取用户信息
-  getUserProfile: function() {
-    wx.getUserProfile({
-      desc: '用于完善用户资料',
-      success: (res) => {
-        const userInfo = res.userInfo;
-        this.setData({
-          userInfo: userInfo
-        });
-        // 缓存用户信息
-        wx.setStorageSync('userInfo', userInfo);
-      },
-      fail: (err) => {
-        console.log('获取用户信息失败', err);
-        // 设置默认信息
-        this.setData({
-          userInfo: {
-            nickName: '摊主',
-            avatarUrl: '/images/default-avatar.png'
-          }
-        });
-      }
+  // 加载用户权限菜单
+  loadUserMenus: function() {
+    const menus = app.getUserMenus();
+    this.setData({
+      userMenus: menus
     });
   },
 
@@ -96,17 +97,30 @@ Page({
 
   // 从服务器获取今日统计
   fetchTodayStatsFromServer: function() {
-    // TODO: 实际项目中调用后台API
-    /*
+    if (!app.isLoggedIn()) {
+      console.log('用户未登录，跳过统计请求');
+      return;
+    }
+    
+    const that = this;
+    const openid = app.getOpenid();
+    
     wx.request({
-      url: 'https://your-api.com/api/stats/today',
+      url: app.globalData.serverConfig.baseUrl + '/api/stats/today',
       method: 'GET',
+      data: {
+        openid: openid
+      },
+      header: {
+        'content-type': 'application/json'
+      },
       success: (res) => {
-        if (res.data && res.data.success) {
+        console.log('统计数据响应：', res.data);
+        if (res.data && res.data.code === 200) {
           const stats = res.data.data;
           const today = new Date().toDateString();
           
-          this.setData({
+          that.setData({
             todaySales: stats.sales || 0,
             todayRevenue: stats.revenue || '0.00',
             visitorCount: stats.visitors || 0
@@ -120,7 +134,6 @@ Page({
         console.error('获取今日统计失败', err);
       }
     });
-    */
   },
 
   // 进入我的小摊
@@ -232,9 +245,35 @@ Page({
     });
   },
 
-  // 编辑资料
+  // 编辑资料（获取用户详细信息）
   editProfile: function() {
-    this.getUserProfile();
+    const that = this;
+    
+    if (!app.isLoggedIn()) {
+      wx.showToast({
+        title: '请稍等，正在登录...',
+        icon: 'none'
+      });
+      return;
+    }
+    
+    app.getUserProfile(function(profileRes) {
+      if (profileRes.success) {
+        that.setData({
+          userInfo: profileRes.data
+        });
+        
+        wx.showToast({
+          title: '更新成功',
+          icon: 'success'
+        });
+      } else {
+        wx.showToast({
+          title: '获取信息失败',
+          icon: 'none'
+        });
+      }
+    });
   },
 
   // 打开设置
@@ -256,23 +295,38 @@ Page({
 
   // 退出登录
   logout: function() {
+    const that = this;
+    
     wx.showModal({
       title: '退出登录',
       content: '确定要退出登录吗？',
       success: (res) => {
         if (res.confirm) {
-          // 清除用户信息缓存
-          wx.removeStorageSync('userInfo');
-          this.setData({
-            userInfo: {
-              nickName: '游客',
-              avatarUrl: '/images/default-avatar.png'
-            }
+          wx.showLoading({
+            title: '退出中...'
           });
           
-          wx.showToast({
-            title: '已退出',
-            icon: 'success'
+          // 调用应用退出登录方法
+          app.logout(function(logoutRes) {
+            wx.hideLoading();
+            
+            // 清除页面数据
+            that.setData({
+              userInfo: app.getUserInfo(),
+              todaySales: 0,
+              todayRevenue: '0.00',
+              visitorCount: 0
+            });
+            
+            wx.showToast({
+              title: '已退出登录',
+              icon: 'success'
+            });
+            
+            // 重新加载页面数据（会触发重新登录）
+            setTimeout(() => {
+              that.loadPageData();
+            }, 1000);
           });
         }
       }

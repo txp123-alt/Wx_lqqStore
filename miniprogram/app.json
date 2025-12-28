@@ -1,5 +1,6 @@
 {
   "pages": [
+    "pages/reserve/reserve",
     "pages/home/home",
     "pages/stall/stall",
     "pages/inventory/inventory"
@@ -17,8 +18,8 @@
     "backgroundColor": "#ffffff",
     "list": [
       {
-        "pagePath": "pages/home/home",
-        "text": "首页",
+        "pagePath": "pages/reserve/reserve",
+        "text": "预订",
         "iconPath": "images/icons/home.png",
         "selectedIconPath": "images/icons/home-active.png"
       },
