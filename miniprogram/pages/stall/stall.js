@@ -1,3 +1,5 @@
+const app = getApp();
+
 Page({
   data: {
     stallItems: [],
@@ -10,6 +12,21 @@ Page({
   },
 
   onLoad: function() {
+    // 检查访问权限
+    if (!app.hasPagePermission('/pages/stall/stall')) {
+      wx.showModal({
+        title: '权限不足',
+        content: '您没有访问此页面的权限',
+        showCancel: false,
+        success: () => {
+          wx.switchTab({
+            url: '/pages/booking/booking' // 默认跳转到有权限的页面
+          });
+        }
+      });
+      return;
+    }
+    
     // 直接在onLoad中设置包含成本的数据
     const stallItems = [
       { id: 1, name: '矿泉水', count: 20, cost: 2.5, image: '/images/water.png' },
@@ -39,20 +56,62 @@ Page({
     wx.setStorageSync('stallItems', stallItems);
   },
 
-  removeItem: function(e) {
-    const id = e.currentTarget.dataset.id;
-    const stallItems = this.data.stallItems.filter(item => item.id !== id);
-    const updatedFilteredItems = this.filterItems(stallItems, this.data.searchKeyword);
+  onShow: function() {
+    // 更新自定义TabBar
+    if (typeof this.getTabBar === 'function' && this.getTabBar()) {
+      this.getTabBar().updateTabBar();
+    }
+  },
+
+  // 从后台加载出摊商品数据
+  loadStallItems: function() {
+    const that = this;
+    const openid = app.getOpenid();
     
-    this.setData({
-      stallItems: stallItems,
-      filteredItems: updatedFilteredItems
+    if (!openid) {
+      console.log('用户未登录，使用本地数据');
+      return;
+    }
+
+    app.request({
+      url: '/api/stall/items',
+      method: 'GET',
+      data: { openid: openid }
+    }).then(res => {
+      if (res && res.code === 200) {
+        const stallItems = res.data || [];
+        that.setData({
+          stallItems: stallItems,
+          filteredItems: that.filterItems(stallItems, that.data.searchKeyword)
+        });
+        wx.setStorageSync('stallItems', stallItems);
+        console.log('出摊商品加载成功:', stallItems);
+      } else {
+        console.log('加载出摊商品失败，使用本地数据:', res?.message || '未知错误');
+      }
+    }).catch(err => {
+      console.error('请求出摊商品失败:', err);
+      wx.showToast({
+        title: '加载失败',
+        icon: 'none'
+      });
     });
-    // 保存到本地存储
-    wx.setStorageSync('stallItems', stallItems);
-    wx.showToast({
-      title: '删除成功',
-      icon: 'success'
+  },
+
+  // 搜索输入处理
+  onSearchInput: function(e) {
+    const keyword = e.detail.value;
+    this.setData({
+      searchKeyword: keyword,
+      filteredItems: this.filterItems(this.data.stallItems, keyword)
+    });
+  },
+
+  // 清空搜索
+  clearSearch: function() {
+    this.setData({
+      searchKeyword: '',
+      filteredItems: this.data.stallItems
     });
   },
 
@@ -113,9 +172,60 @@ Page({
       return;
     }
     
-    // 更新商品数量
-    const updatedStallItems = stallItems.map(item => {
-      if (item.id === selectedItem.id) {
+    // 调用后台接口记录售出
+    this.recordSell(selectedItem, sellCount);
+  },
+
+  // 记录售出到后台
+  recordSell: function(product, count) {
+    const that = this;
+    const openid = app.getOpenid();
+    
+    app.request({
+      url: '/api/stall/sell',
+      method: 'POST',
+      data: {
+        openid: openid,
+        productId: product.id,
+        productName: product.name,
+        sellCount: count,
+        sellPrice: product.cost, // 这里应该是售价，暂时用成本代替
+        sellTime: new Date().toISOString()
+      }
+    }).then(res => {
+      if (res && res.code === 200) {
+        // 售出成功，更新本地数据
+        that.updateLocalProductCount(product.id, count);
+        
+        wx.showToast({
+          title: '售出成功',
+          icon: 'success'
+        });
+        
+        that.setData({
+          showSellModal: false,
+          selectedItem: null,
+          sellCount: 0
+        });
+      } else {
+        wx.showToast({
+          title: res?.message || '售出失败',
+          icon: 'none'
+        });
+      }
+    }).catch(err => {
+      console.error('记录售出失败:', err);
+      wx.showToast({
+        title: '网络错误',
+        icon: 'none'
+      });
+    });
+  },
+
+  // 更新本地商品数量
+  updateLocalProductCount: function(productId, sellCount) {
+    const updatedStallItems = this.data.stallItems.map(item => {
+      if (item.id === productId) {
         return {
           ...item,
           count: item.count - sellCount
@@ -124,112 +234,60 @@ Page({
       return item;
     });
     
-    // 更新本地存储
-    wx.setStorageSync('stallItems', updatedStallItems);
-    
     const updatedFilteredItems = this.filterItems(updatedStallItems, this.data.searchKeyword);
     
-    // 更新页面数据
     this.setData({
       stallItems: updatedStallItems,
-      filteredItems: updatedFilteredItems,
-      showSellModal: false,
-      selectedItem: null,
-      sellCount: 0
+      filteredItems: updatedFilteredItems
     });
     
-    // 后台接口预留：调用售出记录接口
-    this.saveSellRecord(selectedItem.name, sellCount);
-    
-    wx.showToast({
-      title: '售出成功',
-      icon: 'success'
-    });
+    // 保存到本地存储
+    wx.setStorageSync('stallItems', updatedStallItems);
   },
 
-  // 后台接口预留 - 保存售出记录
-  saveSellRecord: function(productName, count) {
-    // TODO: 实际项目中调用后台API保存售出记录
-    console.log('调用后台接口保存售出记录：', {
-      productName: productName,
-      count: count,
-      sellTime: new Date().toISOString()
-    });
+  // 添加商品到出摊
+  addToStall: function(product) {
+    const existingItem = this.data.stallItems.find(item => item.id === product.id);
     
-    // 模拟API调用
-    /*
-    wx.request({
-      url: 'https://your-api.com/api/sell',
-      method: 'POST',
-      data: {
-        productName: productName,
-        count: count,
-        sellTime: new Date().toISOString()
-      },
-      success: function(res) {
-        console.log('售出记录保存成功', res.data);
-      },
-      fail: function(err) {
-        console.error('售出记录保存失败', err);
-      }
-    });
-    */
-  },
-  
-  // 后台接口预留 - 加载出摊商品图片
-  loadStallProductImages: function(items) {
-    // TODO: 实际项目中调用后台API获取出摊商品图片
-    console.log('调用后台接口加载出摊商品图片：', {
-      items: items.map(item => ({
-        id: item.id,
-        name: item.name
-      }))
-    });
-    
-    // 模拟API调用
-    /*
-    wx.request({
-      url: 'https://your-api.com/api/stall/products/images',
-      method: 'POST',
-      data: {
-        productIds: items.map(item => item.id)
-      },
-      success: function(res) {
-        if (res.data && res.data.success) {
-          // 更新出摊商品图片数据
-          const imageMap = res.data.data;
-          const updatedItems = items.map(item => ({
+    if (existingItem) {
+      // 商品已存在，更新数量
+      const updatedStallItems = this.data.stallItems.map(item => {
+        if (item.id === product.id) {
+          return {
             ...item,
-            image: imageMap[item.id] || item.image
-          }));
-          wx.setStorageSync('stallItems', updatedItems);
-          this.setData({
-            stallItems: updatedItems
-          });
+            count: item.count + product.count
+          };
         }
-      }.bind(this),
-      fail: function(err) {
-        console.error('加载出摊商品图片失败', err);
-      }
-    });
-    */
-  },
-
-  // 搜索输入处理
-  onSearchInput: function(e) {
-    const keyword = e.detail.value;
-    this.setData({
-      searchKeyword: keyword,
-      filteredItems: this.filterItems(this.data.stallItems, keyword)
-    });
-  },
-
-  // 清空搜索
-  clearSearch: function() {
-    this.setData({
-      searchKeyword: '',
-      filteredItems: this.data.stallItems
-    });
+        return item;
+      });
+      
+      this.setData({
+        stallItems: updatedStallItems,
+        filteredItems: this.filterItems(updatedStallItems, this.data.searchKeyword)
+      });
+      
+      wx.setStorageSync('stallItems', updatedStallItems);
+      
+      wx.showToast({
+        title: '更新成功',
+        icon: 'success'
+      });
+    } else {
+      // 新商品，添加到列表
+      const updatedStallItems = [...this.data.stallItems, product];
+      
+      this.setData({
+        stallItems: updatedStallItems,
+        filteredItems: this.filterItems(updatedStallItems, this.data.searchKeyword)
+      });
+      
+      wx.setStorageSync('stallItems', updatedStallItems);
+      
+      wx.showToast({
+        title: '添加成功',
+        icon: 'success'
+      });
+    }
   },
 
   // 过滤商品
@@ -240,5 +298,33 @@ Page({
     return items.filter(item => 
       item.name.toLowerCase().includes(keyword.toLowerCase())
     );
+  },
+
+  // 移除商品
+  removeItem: function(e) {
+    const id = e.currentTarget.dataset.id;
+    
+    wx.showModal({
+      title: '确认删除',
+      content: '确定要从出摊列表中移除这个商品吗？',
+      success: (res) => {
+        if (res.confirm) {
+          const stallItems = this.data.stallItems.filter(item => item.id !== id);
+          const updatedFilteredItems = this.filterItems(stallItems, this.data.searchKeyword);
+          
+          this.setData({
+            stallItems: stallItems,
+            filteredItems: updatedFilteredItems
+          });
+          
+          wx.setStorageSync('stallItems', stallItems);
+          
+          wx.showToast({
+            title: '删除成功',
+            icon: 'success'
+          });
+        }
+      }
+    });
   }
 });

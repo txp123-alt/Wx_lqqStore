@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "商品预定",
+  "enablePullDownRefresh": true,
+  "onReachBottomDistance": 50,
+  "usingComponents": {}
+}

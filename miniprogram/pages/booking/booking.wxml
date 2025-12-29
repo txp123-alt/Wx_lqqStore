@@ -1,0 +1,90 @@
+<view class="booking-container">
+  <!-- 搜索栏 -->
+  <view class="search-bar">
+    <view class="search-box">
+      <input class="search-input" 
+             placeholder="搜索商品..." 
+             value="{{searchKeyword}}" 
+             bindinput="onSearchInput" 
+             bindconfirm="onSearch" />
+      <button class="search-btn" bindtap="onSearch">搜索</button>
+    </view>
+  </view>
+
+  <!-- 分类筛选 -->
+  <scroll-view class="category-scroll" scroll-x="true">
+    <view class="category-list">
+      <view class="category-item {{selectedCategory === item ? 'active' : ''}}" 
+            wx:for="{{categories}}" 
+            wx:key="*this" 
+            data-category="{{item}}" 
+            bindtap="onCategorySelect">
+        {{item}}
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- 商品列表 -->
+  <view class="product-list">
+    <view class="product-item" wx:for="{{products}}" wx:key="id">
+      <image class="product-image" 
+             src="{{item.image}}" 
+             mode="aspectFill" 
+             bindtap="onProductDetail" 
+             data-id="{{item.id}}"></image>
+      
+      <view class="product-info">
+        <view class="product-header">
+          <text class="product-name">{{item.name}}</text>
+          <view class="product-rating">
+            <text class="rating-star">⭐</text>
+            <text class="rating-text">{{item.rating}}</text>
+          </view>
+        </view>
+        
+        <text class="product-description">{{item.description}}</text>
+        
+        <view class="product-meta">
+          <text class="product-category">{{item.category}}</text>
+          <text class="product-seller">{{item.sellerName}}</text>
+        </view>
+        
+        <view class="product-footer">
+          <view class="price-info">
+            <text class="current-price">¥{{item.price}}</text>
+            <text class="original-price" wx:if="{{item.originalPrice}}">¥{{item.originalPrice}}</text>
+          </view>
+          
+          <view class="stock-info">
+            <text class="stock-text">库存: {{item.stock}}</text>
+            <text class="sales-text">已售: {{item.salesCount}}</text>
+          </view>
+        </view>
+        
+        <button class="reserve-btn" 
+                bindtap="onReserve" 
+                data-id="{{item.id}}"
+                disabled="{{item.stock <= 0}}">
+          {{item.stock > 0 ? '立即预订' : '暂时缺货'}}
+        </button>
+      </view>
+    </view>
+    
+    <!-- 空状态 -->
+    <view class="empty-state" wx:if="{{products.length === 0 && !loading}}">
+      <text class="empty-icon">🛍️</text>
+      <text class="empty-text">暂无商品</text>
+      <text class="empty-desc">换个关键词或分类试试</text>
+    </view>
+    
+    <!-- 加载状态 -->
+    <view class="loading-more" wx:if="{{loading}}">
+      <text class="loading-text">加载中...</text>
+    </view>
+    
+    <!-- 没有更多 -->
+    <view class="no-more" wx:if="{{!hasMore && products.length > 0}}">
+      <text class="no-more-text">没有更多商品了</text>
+    </view>
+  </view>
+</view>

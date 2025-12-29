@@ -12,6 +12,21 @@ Page({
   },
 
   onLoad: function() {
+    // 检查访问权限
+    if (!app.hasPagePermission('/pages/home/home')) {
+      wx.showModal({
+        title: '权限不足',
+        content: '您没有访问此页面的权限',
+        showCancel: false,
+        success: () => {
+          wx.switchTab({
+            url: '/pages/booking/booking' // 默认跳转到有权限的页面
+          });
+        }
+      });
+      return;
+    }
+    
     // 页面加载时加载用户信息和页面数据
     this.loadPageData();
   },
@@ -19,6 +34,11 @@ Page({
   onShow: function() {
     // 每次显示页面时刷新数据
     this.loadPageData();
+    
+    // 更新自定义TabBar
+    if (typeof this.getTabBar === 'function' && this.getTabBar()) {
+      this.getTabBar().updateTabBar();
+    }
   },
 
   // 加载页面数据
@@ -225,19 +245,16 @@ Page({
   // 跳转到个人中心
   goToProfile: function() {
     wx.showActionSheet({
-      itemList: ['编辑资料', '设置', '关于', '退出登录'],
+      itemList: ['设置', '关于', '退出登录'],
       success: (res) => {
         switch (res.tapIndex) {
           case 0:
-            this.editProfile();
-            break;
-          case 1:
             this.openSettings();
             break;
-          case 2:
+          case 1:
             this.showAbout();
             break;
-          case 3:
+          case 2:
             this.logout();
             break;
         }
@@ -245,36 +262,7 @@ Page({
     });
   },
 
-  // 编辑资料（获取用户详细信息）
-  editProfile: function() {
-    const that = this;
-    
-    if (!app.isLoggedIn()) {
-      wx.showToast({
-        title: '请稍等，正在登录...',
-        icon: 'none'
-      });
-      return;
-    }
-    
-    app.getUserProfile(function(profileRes) {
-      if (profileRes.success) {
-        that.setData({
-          userInfo: profileRes.data
-        });
-        
-        wx.showToast({
-          title: '更新成功',
-          icon: 'success'
-        });
-      } else {
-        wx.showToast({
-          title: '获取信息失败',
-          icon: 'none'
-        });
-      }
-    });
-  },
+
 
   // 打开设置
   openSettings: function() {

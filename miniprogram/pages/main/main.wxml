@@ -1,0 +1,22 @@
+<view class="main-container">
+  <!-- 动态内容区域 -->
+  <view class="content-area">
+    <booking-component wx:if="{{currentComponent === 'booking-component'}}"></booking-component>
+    <stall-component wx:elif="{{currentComponent === 'stall-component'}}"></stall-component>
+    <inventory-component wx:elif="{{currentComponent === 'inventory-component'}}"></inventory-component>
+  </view>
+
+  <!-- 动态TabBar -->
+  <view class="custom-tabbar" wx:if="{{tabBarList.length > 0}}">
+    <view class="tabbar-item {{currentTab === index ? 'active' : ''}}" 
+          wx:for="{{tabBarList}}" 
+          wx:key="pagePath"
+          data-index="{{index}}"
+          bindtap="onTabChange">
+      <image class="tabbar-icon" 
+             src="{{currentTab === index ? item.selectedIconPath : item.iconPath}}"
+             mode="aspectFit"></image>
+      <text class="tabbar-text">{{item.text}}</text>
+    </view>
+  </view>
+</view>

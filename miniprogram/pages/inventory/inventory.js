@@ -29,12 +29,33 @@ Page({
   },
 
   onLoad: function() {
+    // 检查访问权限
+    const app = getApp();
+    if (!app.hasPagePermission('/pages/inventory/inventory')) {
+      wx.showModal({
+        title: '权限不足',
+        content: '您没有访问此页面的权限',
+        showCancel: false,
+        success: () => {
+          wx.switchTab({
+            url: '/pages/booking/booking' // 默认跳转到有权限的页面
+          });
+        }
+      });
+      return;
+    }
+    
     this.loadData();
   },
 
   onShow: function() {
     // 每次页面显示时重新加载数据，确保数据最新
     this.loadData();
+    
+    // 更新自定义TabBar
+    if (typeof this.getTabBar === 'function' && this.getTabBar()) {
+      this.getTabBar().updateTabBar();
+    }
   },
 
   loadData: function() {

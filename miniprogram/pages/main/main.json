@@ -1,0 +1,8 @@
+{
+  "navigationBarTitleText": "摆摊平台",
+  "usingComponents": {
+    "booking-component": "/components/booking/booking",
+    "stall-component": "/components/stall/stall", 
+    "inventory-component": "/components/inventory/inventory"
+  }
+}

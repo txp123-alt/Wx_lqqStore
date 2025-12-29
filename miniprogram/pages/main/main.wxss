@@ -1,0 +1,46 @@
+.main-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.content-area {
+  flex: 1;
+  overflow: hidden;
+}
+
+.custom-tabbar {
+  display: flex;
+  background-color: #ffffff;
+  border-top: 1rpx solid #eee;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.tabbar-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16rpx 0;
+  position: relative;
+}
+
+.tabbar-item.active {
+  color: #667eea;
+}
+
+.tabbar-icon {
+  width: 48rpx;
+  height: 48rpx;
+  margin-bottom: 8rpx;
+}
+
+.tabbar-text {
+  font-size: 24rpx;
+  line-height: 1;
+}
+
+.tabbar-item.active .tabbar-text {
+  color: #667eea;
+  font-weight: bold;
+}

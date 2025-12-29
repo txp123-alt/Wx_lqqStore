@@ -1,9 +1,10 @@
 {
   "pages": [
-    "pages/reserve/reserve",
+    "pages/booking/booking",
     "pages/home/home",
     "pages/stall/stall",
-    "pages/inventory/inventory"
+    "pages/inventory/inventory",
+    "pages/reserve/reserve"
   ],
   "window": {
     "backgroundColor": "#667eea",
@@ -12,13 +13,15 @@
     "navigationBarTitleText": "摆摊平台",
     "navigationBarTextStyle": "white"
   },
+
   "tabBar": {
+    "custom": true,
     "color": "#666666",
     "selectedColor": "#667eea",
     "backgroundColor": "#ffffff",
     "list": [
       {
-        "pagePath": "pages/reserve/reserve",
+        "pagePath": "pages/booking/booking",
         "text": "预订",
         "iconPath": "images/icons/home.png",
         "selectedIconPath": "images/icons/home-active.png"
