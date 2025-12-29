@@ -1,0 +1,303 @@
+.mybooking-container {
+  background-color: #f5f5f5;
+  min-height: 100vh;
+  padding-bottom: 20rpx;
+}
+
+/* 搜索栏 */
+.search-bar {
+  background-color: #fff;
+  padding: 20rpx;
+  border-bottom: 1rpx solid #eee;
+}
+
+.search-box {
+  display: flex;
+  align-items: center;
+  background-color: #f8f8f8;
+  border-radius: 12rpx;
+  padding: 0 20rpx;
+}
+
+.search-input {
+  flex: 1;
+  height: 70rpx;
+  font-size: 28rpx;
+  padding: 0 20rpx;
+}
+
+.search-btn {
+  background-color: #667eea;
+  color: #fff;
+  border: none;
+  border-radius: 8rpx;
+  padding: 15rpx 30rpx;
+  font-size: 28rpx;
+  margin-left: 20rpx;
+}
+
+/* 分类筛选 */
+.category-scroll {
+  background-color: #fff;
+  white-space: nowrap;
+  border-bottom: 1rpx solid #eee;
+}
+
+.category-list {
+  display: flex;
+  padding: 20rpx;
+}
+
+.category-item {
+  flex-shrink: 0;
+  padding: 12rpx 28rpx;
+  margin-right: 20rpx;
+  background-color: #f8f8f8;
+  border-radius: 8rpx;
+  font-size: 28rpx;
+  color: #666;
+  border: 1rpx solid transparent;
+}
+
+.category-item.active {
+  background-color: #667eea;
+  color: #fff;
+}
+
+/* 预定列表 */
+.product-list {
+  padding: 20rpx;
+}
+
+.product-item {
+  margin-bottom: 20rpx;
+}
+
+.product-card {
+  background-color: #fff;
+  border-radius: 12rpx;
+  overflow: hidden;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.06);
+}
+
+/* 卡片上半部分：图片和基本信息 */
+.card-top {
+  display: flex;
+  padding: 20rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+.product-image {
+  width: 160rpx;
+  height: 160rpx;
+  border-radius: 8rpx;
+  margin-right: 20rpx;
+  flex-shrink: 0;
+  background-color: #f5f5f5;
+}
+
+.product-basic-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.product-name {
+  font-size: 32rpx;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 10rpx;
+  line-height: 1.4;
+}
+
+.product-description {
+  font-size: 26rpx;
+  color: #999;
+  margin-bottom: 12rpx;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.product-meta {
+  display: flex;
+  gap: 16rpx;
+  margin-top: auto;
+}
+
+.product-category {
+  font-size: 24rpx;
+  color: #667eea;
+  background-color: #f0f4ff;
+  padding: 4rpx 12rpx;
+  border-radius: 4rpx;
+}
+
+.product-seller {
+  font-size: 24rpx;
+  color: #999;
+}
+
+/* 卡片中间部分：价格信息 */
+.card-middle {
+  display: flex;
+  justify-content: space-between;
+  padding: 16rpx 20rpx;
+  background-color: #fafafa;
+}
+
+.info-row {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.info-row.highlight {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 8rpx 20rpx;
+  border-radius: 8rpx;
+}
+
+.row-label {
+  font-size: 24rpx;
+  color: #999;
+  margin-bottom: 4rpx;
+}
+
+.info-row.highlight .row-label {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.row-value {
+  font-size: 28rpx;
+  color: #333;
+  font-weight: 500;
+}
+
+.row-value.price {
+  color: #ff6b6b;
+  font-size: 32rpx;
+}
+
+.row-value.total {
+  color: #fff;
+  font-size: 36rpx;
+  font-weight: bold;
+}
+
+/* 卡片底部部分：状态和操作 */
+.card-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16rpx 20rpx;
+}
+
+.status-time {
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.status-badge {
+  font-size: 24rpx;
+  padding: 6rpx 16rpx;
+  border-radius: 4rpx;
+  font-weight: 500;
+  display: inline-block;
+  width: fit-content;
+}
+
+.status-waiting {
+  background-color: #fff7e6;
+  color: #d46b08;
+}
+
+.status-delivering {
+  background-color: #e6f7ff;
+  color: #096dd9;
+}
+
+.status-ready {
+  background-color: #f9f0ff;
+  color: #722ed1;
+}
+
+.status-completed {
+  background-color: #f6ffed;
+  color: #52c41a;
+}
+
+.status-cancelled {
+  background-color: #fff1f0;
+  color: #cf1322;
+}
+
+.reserve-time {
+  font-size: 24rpx;
+  color: #999;
+}
+
+.cancel-btn {
+  padding: 12rpx 32rpx;
+  background-color: #667eea;
+  color: #fff;
+  border: none;
+  border-radius: 8rpx;
+  font-size: 28rpx;
+}
+
+.cancel-btn[disabled] {
+  background-color: #d9d9d9;
+  color: #999;
+}
+
+/* 空状态 */
+.empty-state {
+  text-align: center;
+  padding: 120rpx 0;
+}
+
+.empty-icon {
+  width: 120rpx;
+  height: 120rpx;
+  margin: 0 auto 30rpx;
+  background-color: #f5f5f5;
+  border-radius: 50%;
+  display: block;
+}
+
+.empty-text {
+  font-size: 32rpx;
+  color: #333;
+  display: block;
+  margin-bottom: 15rpx;
+}
+
+.empty-desc {
+  font-size: 26rpx;
+  color: #999;
+  display: block;
+}
+
+/* 加载状态 */
+.loading-more {
+  text-align: center;
+  padding: 40rpx 0;
+}
+
+.loading-text {
+  font-size: 28rpx;
+  color: #999;
+}
+
+.no-more {
+  text-align: center;
+  padding: 40rpx 0;
+}
+
+.no-more-text {
+  font-size: 28rpx;
+  color: #999;
+}

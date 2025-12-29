@@ -19,8 +19,8 @@ App({
 
             // 后台服务器配置
             serverConfig: {
-                //baseUrl: 'http://192.168.79.1:8080', // 本地后台服务器地址
-                baseUrl: 'http://192.168.112.1:8080', //公司
+                baseUrl: 'http://192.168.79.1:8080', // 本地后台服务器地址
+//                baseUrl: 'http://192.168.112.1:8080', //公司
                 apiPrefix: '/api' // API接口前缀
             }
         };
@@ -525,6 +525,7 @@ App({
             }
         ];
 
+//        return tabBarConfig;
         // 过滤出用户有权限的TabBar页面
         return tabBarConfig.filter(tab => {
             return menus.some(menu => menu.path === `/${tab.pagePath}`) ||

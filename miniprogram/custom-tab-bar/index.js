@@ -26,6 +26,12 @@ Component({
           selectedIconPath: "/images/icons/home-active.png"
         },
         {
+          pagePath: "/pages/mybooking/mybooking",
+          text: "我的预定",
+          iconPath: "/images/icons/usercenter.png",
+          selectedIconPath: "/images/icons/usercenter-active.png"
+        },
+        {
           pagePath: "/pages/stall/stall",
           text: "出摊",
           iconPath: "/images/icons/business.png",

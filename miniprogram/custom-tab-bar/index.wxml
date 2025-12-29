@@ -2,11 +2,13 @@
   <view 
     wx:for="{{list}}" 
     wx:key="index" 
-    class="tab-bar-item" 
+    class="tab-bar-item {{selected === index ? 'active' : ''}}" 
     data-path="{{item.pagePath}}" 
     data-index="{{index}}" 
     bind:tap="switchTab">
-    <image src="{{selected === index ? item.selectedIconPath : item.iconPath}}" class="tab-bar-icon"/>
-    <text class="tab-bar-text" style="color: {{selected === index ? selectedColor : color}}">{{item.text}}</text>
+    <view class="icon-wrapper">
+      <image src="{{selected === index ? item.selectedIconPath : item.iconPath}}" class="tab-bar-icon"/>
+    </view>
+    <text class="tab-bar-text">{{item.text}}</text>
   </view>
 </view>

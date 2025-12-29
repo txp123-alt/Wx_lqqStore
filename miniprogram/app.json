@@ -4,7 +4,8 @@
     "pages/home/home",
     "pages/stall/stall",
     "pages/inventory/inventory",
-    "pages/reserve/reserve"
+    "pages/reserve/reserve",
+    "pages/mybooking/mybooking"
   ],
   "window": {
     "backgroundColor": "#667eea",
@@ -16,7 +17,7 @@
 
   "tabBar": {
     "custom": true,
-    "color": "#666666",
+    "color": "#999999",
     "selectedColor": "#667eea",
     "backgroundColor": "#ffffff",
     "list": [
@@ -25,6 +26,12 @@
         "text": "预订",
         "iconPath": "images/icons/home.png",
         "selectedIconPath": "images/icons/home-active.png"
+      },
+      {
+        "pagePath": "pages/mybooking/mybooking",
+        "text": "我的预定",
+        "iconPath": "images/icons/usercenter.png",
+        "selectedIconPath": "images/icons/usercenter-active.png"
       },
       {
         "pagePath": "pages/stall/stall",
