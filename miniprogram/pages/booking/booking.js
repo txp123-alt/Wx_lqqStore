@@ -6,10 +6,29 @@ Page({
     searchKeyword: '',
     selectedCategory: '',
     categories: ['全部', '食品', '饮品', '日用品', '其他'],
+    selectedSort: '',
+    sortOptions: [
+      { key: '', name: '默认排序', order: 'desc' },
+      { key: 'price', name: '价格', order: 'asc' },
+      { key: 'sales', name: '销量', order: 'desc' },
+      { key: 'stock', name: '库存', order: 'desc' }
+    ],
+    sortOrder: 'desc',
     loading: false,
     hasMore: true,
     page: 1,
-    pageSize: 10
+    pageSize: 10,
+    // 预订表单数据
+    reserveForm: {
+      quantity: 1,
+      contactName: '',
+      contactPhone: '',
+      contactAddr: '',
+      remark: ''
+    },
+    currentProduct: null,
+    showReserveModal: false,
+    reserveTotalPrice: '0.00'
   },
 
   onLoad: function() {
@@ -27,23 +46,58 @@ Page({
     //   });
     //   return;
     // }
-    
-    this.loadProducts();
+
+    // 等待用户登录成功后再加载商品
+    this.waitForLoginAndLoad();
   },
 
   onShow: function() {
-    // 每次显示页面时刷新数据
-    this.setData({
-      page: 1,
-      products: [],
-      hasMore: true
-    });
-    this.loadProducts();
-    
+    // 每次显示页面时刷新数据（仅当已登录时）
+    if (app.getOpenid()) {
+      this.setData({
+        page: 1,
+        products: [],
+        hasMore: true
+      });
+      this.loadProducts();
+    }
+
     // 更新自定义TabBar
     if (typeof this.getTabBar === 'function' && this.getTabBar()) {
       this.getTabBar().updateTabBar();
       this.getTabBar().updateSelected();
+    }
+  },
+
+  // 等待用户登录成功后加载商品
+  waitForLoginAndLoad: function() {
+    const checkLogin = () => {
+      if (app.getOpenid()) {
+        // 已登录，加载商品
+        this.loadProducts();
+      } else {
+        // 未登录，延迟重试
+        setTimeout(() => {
+          checkLogin();
+        }, 500);
+      }
+    };
+
+    // 设置超时，避免无限等待
+    const timeout = setTimeout(() => {
+      if (!app.getOpenid()) {
+        console.log('等待登录超时，用户可能未登录');
+      }
+    }, 30000);
+
+    checkLogin();
+    this.loginTimeout = timeout;
+  },
+
+  onUnload: function() {
+    // 清理登录等待定时器
+    if (this.loginTimeout) {
+      clearTimeout(this.loginTimeout);
     }
   },
 
@@ -53,77 +107,45 @@ Page({
 
     this.setData({ loading: true });
 
-    const app = getApp();
-    const that = this;
+    const openid = app.getOpenid();
 
-    // 模拟数据，实际应该从服务器获取
-    setTimeout(() => {
-      const mockProducts = [
-        {
-          id: 1,
-          name: '手抓饼',
-          price: 8.00,
-          originalPrice: 10.00,
-          image: '/images/products/pancake.jpg',
-          category: '食品',
-          description: '新鲜现做手抓饼，可加蛋加肠',
-          stock: 50,
-          salesCount: 128,
-          rating: 4.8,
-          sellerName: '张三的小摊'
-        },
-        {
-          id: 2,
-          name: '柠檬水',
-          price: 5.00,
-          originalPrice: 6.00,
-          image: '/images/products/lemonade.jpg',
-          category: '饮品',
-          description: '新鲜柠檬制作，冰爽解渴',
-          stock: 100,
-          salesCount: 89,
-          rating: 4.6,
-          sellerName: '李四的饮品店'
-        },
-        {
-          id: 3,
-          name: '手机支架',
-          price: 15.00,
-          originalPrice: 20.00,
-          image: '/images/products/phone-stand.jpg',
-          category: '日用品',
-          description: '可调节角度，稳固耐用',
-          stock: 30,
-          salesCount: 45,
-          rating: 4.7,
-          sellerName: '王五的小摊'
-        }
-      ];
-
-      let newProducts = mockProducts;
-      
-      // 应用搜索过滤
-      if (this.data.searchKeyword) {
-        newProducts = newProducts.filter(item => 
-          item.name.includes(this.data.searchKeyword) ||
-          item.description.includes(this.data.searchKeyword)
-        );
+    app.request({
+      url: '/api/products/list',
+      method: 'GET',
+      data: {
+        openid: openid,
+        page: this.data.page,
+        pageSize: this.data.pageSize,
+        keyword: this.data.searchKeyword,
+        category: this.data.selectedCategory === '全部' ? '' : this.data.selectedCategory,
+        sortBy: this.data.selectedSort,
+        sortOrder: this.data.sortOrder
       }
+    }).then(res => {
+      if (res && res.code === 200) {
+        const newProducts = res.data || [];
 
-      // 应用分类过滤
-      if (this.data.selectedCategory && this.data.selectedCategory !== '全部') {
-        newProducts = newProducts.filter(item => 
-          item.category === this.data.selectedCategory
-        );
+        this.setData({
+          products: this.data.page === 1 ? newProducts : [...this.data.products, ...newProducts],
+          loading: false,
+          hasMore: newProducts.length >= this.data.pageSize,
+          page: this.data.page + 1
+        });
+      } else {
+        this.setData({ loading: false });
+        wx.showToast({
+          title: res?.message || '加载失败',
+          icon: 'none'
+        });
       }
-
-      that.setData({
-        products: this.data.page === 1 ? newProducts : [...this.data.products, ...newProducts],
-        loading: false,
-        hasMore: newProducts.length >= this.data.pageSize,
-        page: this.data.page + 1
+    }).catch(err => {
+      console.error('加载商品列表失败:', err);
+      this.setData({ loading: false });
+      wx.showToast({
+        title: '网络错误',
+        icon: 'none'
       });
-    }, 1000);
+    });
   },
 
   // 搜索输入
@@ -155,25 +177,255 @@ Page({
     this.loadProducts();
   },
 
+  // 选择排序
+  onSortSelect: function(e) {
+    const sortKey = e.currentTarget.dataset.sort;
+    const sortOrder = e.currentTarget.dataset.order;
+
+    if (this.data.selectedSort === sortKey) {
+      // 切换排序顺序
+      const newOrder = this.data.sortOrder === 'asc' ? 'desc' : 'asc';
+      const updatedSortOptions = this.data.sortOptions.map(item => {
+        if (item.key === sortKey) {
+          return { ...item, order: newOrder };
+        }
+        return item;
+      });
+      this.setData({
+        sortOrder: newOrder,
+        sortOptions: updatedSortOptions,
+        page: 1,
+        products: [],
+        hasMore: true
+      });
+    } else {
+      // 切换排序方式
+      const updatedSortOptions = this.data.sortOptions.map(item => {
+        if (item.key === sortKey) {
+          return { ...item, order: sortOrder };
+        }
+        return item;
+      });
+      this.setData({
+        selectedSort: sortKey,
+        sortOrder: sortOrder,
+        sortOptions: updatedSortOptions,
+        page: 1,
+        products: [],
+        hasMore: true
+      });
+    }
+    this.loadProducts();
+  },
+
   // 预订商品
   onReserve: function(e) {
     const productId = e.currentTarget.dataset.id;
     const product = this.data.products.find(item => item.id === productId);
-    
+
     if (!product) return;
 
-    wx.showModal({
-      title: '预订确认',
-      content: `确定要预订 ${product.name} 吗？\n价格：¥${product.price}`,
-      success: (res) => {
-        if (res.confirm) {
-          // 这里应该调用预订API
-          wx.showToast({
-            title: '预订成功',
-            icon: 'success'
-          });
-        }
+    // 计算初始总价
+    const totalPrice = (product.price * 1).toFixed(2);
+
+    // 保存当前商品信息
+    this.setData({
+      currentProduct: product,
+      reserveForm: {
+        quantity: 1,
+        contactName: '',
+        contactPhone: '',
+        contactAddr: '',
+        remark: ''
+      },
+      showReserveModal: true,
+      reserveTotalPrice: totalPrice
+    });
+  },
+
+  // 关闭预订弹窗
+  onCloseReserveModal: function() {
+    this.setData({
+      showReserveModal: false
+    });
+  },
+
+  // 阻止弹窗内容点击冒泡
+  onModalContentTap: function() {
+    // 阻止事件冒泡
+  },
+
+  // 增加数量
+  onIncreaseQuantity: function() {
+    const maxQuantity = this.data.currentProduct.stock || 99;
+    if (this.data.reserveForm.quantity >= maxQuantity) {
+      wx.showToast({
+        title: '超过库存数量',
+        icon: 'none'
+      });
+      return;
+    }
+    const newQuantity = this.data.reserveForm.quantity + 1;
+    const newTotal = (this.data.currentProduct.price * newQuantity).toFixed(2);
+    this.setData({
+      'reserveForm.quantity': newQuantity,
+      reserveTotalPrice: newTotal
+    });
+  },
+
+  // 减少数量
+  onDecreaseQuantity: function() {
+    if (this.data.reserveForm.quantity <= 1) {
+      return;
+    }
+    const newQuantity = this.data.reserveForm.quantity - 1;
+    const newTotal = (this.data.currentProduct.price * newQuantity).toFixed(2);
+    this.setData({
+      'reserveForm.quantity': newQuantity,
+      reserveTotalPrice: newTotal
+    });
+  },
+
+  // 输入联系人姓名
+  onContactNameInput: function(e) {
+    this.setData({
+      'reserveForm.contactName': e.detail.value
+    });
+  },
+
+  // 输入联系电话
+  onContactPhoneInput: function(e) {
+    this.setData({
+      'reserveForm.contactPhone': e.detail.value
+    });
+  },
+
+  // 输入配送地址
+  onContactAddrInput: function(e) {
+    this.setData({
+      'reserveForm.contactAddr': e.detail.value
+    });
+  },
+
+  // 输入备注
+  onRemarkInput: function(e) {
+    this.setData({
+      'reserveForm.remark': e.detail.value
+    });
+  },
+
+  // 确认预订
+  onConfirmReserve: function() {
+    const product = this.data.currentProduct;
+    const form = this.data.reserveForm;
+    const openid = app.getOpenid();
+
+    if (!openid) {
+      wx.showToast({
+        title: '请先登录',
+        icon: 'none'
+      });
+      return;
+    }
+
+    // 验证表单
+    if (!form.contactName) {
+      wx.showToast({
+        title: '请输入联系人姓名',
+        icon: 'none'
+      });
+      return;
+    }
+
+    if (!form.contactPhone) {
+      wx.showToast({
+        title: '请输入联系电话',
+        icon: 'none'
+      });
+      return;
+    }
+
+    if (!/^\d{11}$/.test(form.contactPhone)) {
+      wx.showToast({
+        title: '请输入正确的手机号码',
+        icon: 'none'
+      });
+      return;
+    }
+
+    if (!form.contactAddr) {
+      wx.showToast({
+        title: '请输入配送地址',
+        icon: 'none'
+      });
+      return;
+    }
+
+    // 计算价格信息
+    const totalPrice = (product.price * form.quantity).toFixed(2);
+    const now = new Date();
+    const reservedDate = now.toISOString().split('T')[0];
+    const expiryDate = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString().replace('T', ' ').substring(0, 19);
+
+    // 构建请求参数
+    const requestData = {
+      productId: product.id,
+      quantity: form.quantity,
+      contactName: form.contactName,
+      contactPhone: form.contactPhone,
+      contactAddr: form.contactAddr,
+      remark: form.remark,
+      totalPrice: parseFloat(totalPrice),
+      deposit: 0,
+      reservedDate: reservedDate,
+      expiryDate: expiryDate
+    };
+
+    // 打印请求参数
+    console.log('===== 预订请求参数 =====');
+    console.log('productId:', requestData.productId);
+    console.log('quantity:', requestData.quantity);
+    console.log('contactName:', requestData.contactName);
+    console.log('contactPhone:', requestData.contactPhone);
+    console.log('contactAddr:', requestData.contactAddr);
+    console.log('remark:', requestData.remark);
+    console.log('totalPrice:', requestData.totalPrice);
+    console.log('deposit:', requestData.deposit);
+    console.log('reservedDate:', requestData.reservedDate);
+    console.log('expiryDate:', requestData.expiryDate);
+    console.log('========================');
+
+    // 调用预订接口
+    app.request({
+      url: '/api/reservations',
+      method: 'POST',
+      data: requestData
       }
+    }).then(res => {
+      if (res && res.code === 200) {
+        wx.showToast({
+          title: '预订成功',
+          icon: 'success'
+        });
+        this.setData({
+          showReserveModal: false,
+          page: 1,
+          products: [],
+          hasMore: true
+        });
+        this.loadProducts();
+      } else {
+        wx.showToast({
+          title: res?.message || '预订失败',
+          icon: 'none'
+        });
+      }
+    }).catch(err => {
+      console.error('创建预订失败:', err);
+      wx.showToast({
+        title: '网络错误',
+        icon: 'none'
+      });
     });
   },
 
