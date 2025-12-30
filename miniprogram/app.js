@@ -19,8 +19,8 @@ App({
 
             // 后台服务器配置
             serverConfig: {
-                baseUrl: 'http://192.168.79.1:8080', // 本地后台服务器地址
-//                baseUrl: 'http://192.168.112.1:8080', //公司
+                // baseUrl: 'http://192.168.79.1:8080', // 本地后台服务器地址
+               baseUrl: 'http://192.168.112.1:8080', //公司
                 apiPrefix: '/api' // API接口前缀
             }
         };
@@ -335,6 +335,12 @@ App({
                             name: '商品预定',
                             icon: 'shopping',
                             path: '/pages/booking/booking'
+                        },
+                        {
+                            id: 'mybooking',
+                            name: '我的预定',
+                            icon: 'user',
+                            path: '/pages/mybooking/mybooking'
                         }
                     ];
                     
@@ -360,13 +366,19 @@ App({
                 }
             } else {
                 // 加载失败时也使用默认菜单
-                console.log('获取用户菜单失败，使用默认菜单（仅商品预定页面）');
+                console.log('获取用户菜单失败，使用默认菜单（仅商品预定和我的预定页面）');
                 const defaultMenus = [
                     {
                         id: 'booking',
                         name: '商品预定',
                         icon: 'shopping',
                         path: '/pages/booking/booking'
+                    },
+                    {
+                        id: 'mybooking',
+                        name: '我的预定',
+                        icon: 'user',
+                        path: '/pages/mybooking/mybooking'
                     }
                 ];
                 
@@ -381,7 +393,7 @@ App({
             }
         }).catch(err => {
             console.error('请求用户菜单接口失败：', err);
-            console.log('网络请求失败，使用默认菜单（仅商品预定页面）');
+            console.log('网络请求失败，使用默认菜单（仅商品预定和我的预定页面）');
             
             // 网络失败时使用默认菜单
             const defaultMenus = [
@@ -390,6 +402,12 @@ App({
                     name: '商品预定',
                     icon: 'shopping',
                     path: '/pages/booking/booking'
+                },
+                {
+                    id: 'mybooking',
+                    name: '我的预定',
+                    icon: 'user',
+                    path: '/pages/mybooking/mybooking'
                 }
             ];
             
@@ -468,14 +486,20 @@ App({
             return cachedMenus;
         }
 
-        // 如果都没有，返回默认菜单（仅商品预定页面）
-        console.log('未找到用户菜单数据，返回默认菜单（仅商品预定页面）');
+        // 如果都没有，返回默认菜单（仅商品预定和我的预定页面）
+        console.log('未找到用户菜单数据，返回默认菜单（仅商品预定和我的预定页面）');
         const defaultMenus = [
             {
                 id: 'booking',
                 name: '商品预定',
                 icon: 'shopping',
                 path: '/pages/booking/booking'
+            },
+            {
+                id: 'mybooking',
+                name: '我的预定',
+                icon: 'user',
+                path: '/pages/mybooking/mybooking'
             }
         ];
 

@@ -1,5 +1,6 @@
 {
   "navigationBarTitleText": "我的预定",
   "enablePullDownRefresh": true,
-  "onReachBottomDistance": 50
+  "onReachBottomDistance": 50,
+  "usingComponents": {}
 }

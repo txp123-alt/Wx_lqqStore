@@ -7,8 +7,14 @@
     data-index="{{index}}" 
     bind:tap="switchTab">
     <view class="icon-wrapper">
-      <image src="{{selected === index ? item.selectedIconPath : item.iconPath}}" class="tab-bar-icon"/>
+      <image src="{{selected === index ? item.selectedIconPath : item.iconPath}}" class="tab-bar-icon" mode="aspectFit"/>
     </view>
     <text class="tab-bar-text">{{item.text}}</text>
   </view>
+</view>
+
+<!-- 调试信息，可以删除 -->
+<view class="tab-bar-debug" wx:if="{{false}}">
+  <text>选中: {{selected}}</text>
+  <text>数量: {{list.length}}</text>
 </view>

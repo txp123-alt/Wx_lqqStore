@@ -60,6 +60,7 @@ Page({
     // 更新自定义TabBar
     if (typeof this.getTabBar === 'function' && this.getTabBar()) {
       this.getTabBar().updateTabBar();
+      this.getTabBar().updateSelected();
     }
   },
 

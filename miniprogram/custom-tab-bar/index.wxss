@@ -9,6 +9,7 @@
   padding-bottom: env(safe-area-inset-bottom);
   border-top: 1px solid #f0f0f0;
   box-shadow: 0 -2rpx 8rpx rgba(0, 0, 0, 0.04);
+  z-index: 9999;
 }
 
 .tab-bar-item {
@@ -20,6 +21,7 @@
   flex-direction: column;
   height: 100%;
   position: relative;
+  padding: 8rpx 0;
 }
 
 .tab-bar-item.active {
@@ -59,4 +61,5 @@
 .tab-bar-text {
   font-size: 20rpx;
   line-height: 1.2;
+  margin-top: 2rpx;
 }

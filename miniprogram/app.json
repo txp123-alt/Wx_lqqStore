@@ -1,11 +1,11 @@
 {
   "pages": [
     "pages/booking/booking",
+    "pages/mybooking/mybooking",
     "pages/home/home",
     "pages/stall/stall",
     "pages/inventory/inventory",
-    "pages/reserve/reserve",
-    "pages/mybooking/mybooking"
+    "pages/reserve/reserve"
   ],
   "window": {
     "backgroundColor": "#667eea",
